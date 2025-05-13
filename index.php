@@ -1,0 +1,96 @@
+<?php
+// Start session
+session_start();
+
+// Error reporting
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Define base path constants
+define('ROOT', dirname(__FILE__));
+define('DS', DIRECTORY_SEPARATOR);
+define('APP', ROOT . DS . 'app');
+define('CONTROLLERS', APP . DS . 'controllers');
+define('MODELS', APP . DS . 'models');
+define('VIEWS', APP . DS . 'views');
+define('CONFIG', APP . DS . 'config');
+
+// Verify and load configuration
+$configFile = CONFIG . DS . 'config.php';
+if (!file_exists($configFile)) {
+    die('Configuration file missing!');
+}
+require_once $configFile;
+
+// Get database connection
+$db = Database::getInstance();
+
+// Enhanced autoloader
+spl_autoload_register(function($className) {
+    $paths = [
+        CONTROLLERS . DS . $className . '.php',
+        MODELS . DS . $className . '.php'
+    ];
+    
+    foreach ($paths as $path) {
+        if (file_exists($path)) {
+            require_once $path;
+            return;
+        }
+    }
+});
+
+/**
+ * Handle 404 errors
+ */
+function handleNotFound() {
+    header("HTTP/1.0 404 Not Found");
+    
+    // Check if HomeController exists and has notFound method
+    $homeControllerPath = CONTROLLERS . DS . 'HomeController.php';
+    if (file_exists($homeControllerPath)) {
+        require_once $homeControllerPath;
+        if (method_exists('HomeController', 'notFound')) {
+            $homeController = new HomeController(Database::getInstance());
+            $homeController->notFound();
+            exit;
+        }
+    }
+    
+    // Fallback to simple 404 message
+    die('404 - Page Not Found');
+}
+
+// Sanitize and parse URL
+$url = isset($_GET['url']) ? rtrim($_GET['url'], '/') : DEFAULT_CONTROLLER . '/' . DEFAULT_ACTION;
+$urlParts = explode('/', filter_var($url, FILTER_SANITIZE_URL));
+
+// Route handling
+$controllerName = ucfirst($urlParts[0]) . 'Controller';
+$actionName = isset($urlParts[1]) ? $urlParts[1] : DEFAULT_ACTION;
+
+// Handle parameters
+$params = array_slice($urlParts, 2);
+
+// Verify controller exists
+$controllerFile = CONTROLLERS . DS . $controllerName . '.php';
+if (!file_exists($controllerFile)) {
+    handleNotFound();
+}
+
+require_once $controllerFile;
+
+// Verify method exists
+if (!method_exists($controllerName, $actionName)) {
+    handleNotFound();
+}
+
+// Instantiate and execute
+try {
+    $controller = new $controllerName($db);
+    call_user_func_array([$controller, $actionName], $params);
+} catch (Exception $e) {
+    error_log("Controller error: " . $e->getMessage());
+    handleNotFound();
+}
