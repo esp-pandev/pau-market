@@ -1,7 +1,7 @@
 <?php
 class AdminController {
     private $db;
-    
+
     public function __construct() {
         $this->db = Database::getInstance();
         $this->checkAuth();
@@ -26,10 +26,18 @@ class AdminController {
         // Get user count
         $usersCount = $this->getUsersCount();
         
+        //Get Categories count
+        $categoriesCount = $this->getCategoriesCount();
+       
+        // Get products count
+        $productsCount = $this->getProductsCount();
+        // Load dashboard view
         $this->loadView('admin/dashboard', [
             'title' => 'Dashboard',
             'user' => $_SESSION['user'],
-            'usersCount' => $usersCount
+            'usersCount' => $usersCount,
+            'categoriesCount' => $categoriesCount,
+            'productsCount' => $productsCount,     
             
             // You can add productsCount and categoriesCount here when available
         ]);
@@ -88,6 +96,28 @@ protected function requireAuth() {
         exit;
     }
 }
+
+    private function getCategoriesCount() {
+        try {
+            $stmt = $this->db->query("SELECT COUNT(*) as count FROM categories");
+            $result = $stmt->fetch();
+            return $result['count'];
+        } catch (PDOException $e) {
+            error_log("Error counting categories: " . $e->getMessage());
+            return 0; // Return 0 if there's an error
+        }
+    }
+
+    private function getProductsCount() {
+        try {
+            $stmt = $this->db->query("SELECT COUNT(*) as count FROM products");
+            $result = $stmt->fetch();
+            return $result['count'];
+        } catch (PDOException $e) {
+            error_log("Error counting categories: " . $e->getMessage());
+            return 0; // Return 0 if there's an error
+        }
+    }
 
     private function loadView($view, $data = []) {
         extract($data);

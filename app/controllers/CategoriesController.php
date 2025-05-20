@@ -1,34 +1,96 @@
 <?php
-require_once MODELS . DS . 'Category.php';
-require_once __DIR__ . DS . '..' . DS . 'helpers' . DS . 'auth.php';
-
+/**
+ * Categories controller
+ *
+ * Handles CRUD operations for categories
+ */
 class CategoriesController {
+    /**
+     * Category model
+     *
+     * @var Category
+     */
     private $categoryModel;
+
+    /**
+     * Database connection
+     *
+     * @var PDO
+     */
+    private $db;
     
+    /**
+     * Constructor
+     *
+     * @param PDO $db Database connection
+     */
     public function __construct($db) {
+        $this->db = $db;
         $this->categoryModel = new Category($db);
     }
+
+        /**
+     * Check if user is authenticated
+     * Redirects to login page if not
+     */
+    public function ensureAuthenticated() {
+    // Start session if not already started
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
     
-    // List all categories
-    public function index() {
-        ensureAuthenticated(); // Only authenticated users
+    // Check if user is logged in
+    if (!isset($_SESSION['user'])) {
+        // Store current URL for redirect back after login
+        $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
         
+        // Redirect to login page
+        header('Location: ' . BASE_URL . 'auth/login');
+        exit;
+    }
+    
+    // Additional role-based checks can be added here if needed
+}
+    
+    /**
+     * List all categories
+     */
+    public function index() {
+        // Only authenticated users
+        $this->ensureAuthenticated();
+        
+        // Get all categories
         $categories = $this->categoryModel->getAll();
+        // Render view
         require VIEWS . DS . 'categories' . DS . 'index.php';
     }
     
-    // Show create form
+    /**
+     * Show create form
+     */
     public function create() {
-        ensureAuthenticated(); // Only authenticated users
+        // Only authenticated users
+        $this->ensureAuthenticated();
         
+        // Render view
         require VIEWS . DS . 'categories' . DS . 'create.php';
     }
     
-    // Store new category
+    /**
+     * Store new category
+     */
+    /**
+     * Store new category
+     *
+     * Handles form submission and validates the data
+     */
     public function store() {
-        ensureAuthenticated(); // Only authenticated users
+        // Only authenticated users
+        $this->ensureAuthenticated();
         
+        // Validate and store new category
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Gather and sanitize input data
             $data = [
                 'name' => trim($_POST['name']),
                 'slug' => $this->generateSlug(trim($_POST['name'])),
@@ -38,101 +100,162 @@ class CategoriesController {
             // Validate
             $errors = [];
             if (empty($data['name'])) {
+                // Name is required
                 $errors['name'] = 'Name is required';
             }
             
             if ($this->categoryModel->slugExists($data['slug'])) {
+                // Prevent slug duplicates
                 $errors['slug'] = 'Slug already exists';
             }
             
             if (empty($errors)) {
+                // Attempt to create category
                 if ($this->categoryModel->create($data)) {
+                    // Redirect on success
                     header('Location: /categories');
                     exit;
                 } else {
+                    // Handle failed create
                     $errors['general'] = 'Failed to create category';
                 }
             }
             
+            // Render view with errors
             include __DIR__ . '/../views/categories/create.php';
         } else {
+            // Redirect to create form
             header('Location: ' . BASE_URL . 'categories/create');
             exit;
         }
     }
     
-    // Show edit form
+    /**
+     * Show edit form
+     *
+     * @param int $id Category ID
+     */
     public function edit($id) {
-        ensureAuthenticated(); // Only authenticated users
+        // Only authenticated users
+        $this->ensureAuthenticated();
         
+        // Get category
         $category = $this->categoryModel->getById($id);
         if (!$category) {
+            // Redirect to categories list
             header('Location: /categories');
             exit;
         }
         
+        // Render view
         include __DIR__ . '/../views/categories/edit.php';
     }
     
-    // Update category
+    /**
+     * Update category
+     *
+     * @param int $id Category ID
+     */
+    /**
+     * Update category
+     *
+     * @param int $id Category ID
+     */
     public function update($id) {
-        ensureAuthenticated(); // Only authenticated users
+        // Ensure user is authenticated
+        $this->ensureAuthenticated();
         
+        // Retrieve the category by ID
         $category = $this->categoryModel->getById($id);
         if (!$category) {
+            // Redirect to categories list if category not found
             header('Location: /categories');
             exit;
         }
         
+        // Check if the request method is POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Gather and sanitize input data
             $data = [
                 'name' => trim($_POST['name']),
                 'slug' => $this->generateSlug(trim($_POST['name'])),
-                'description' => trim($_POST['description'])
+                'description' => trim($_POST['description']),
             ];
             
-            // Validate
+            // Initialize an array for validation errors
             $errors = [];
+            
+            // Validate name field
             if (empty($data['name'])) {
                 $errors['name'] = 'Name is required';
             }
             
+            // Check for slug uniqueness
             if ($this->categoryModel->slugExists($data['slug'], $id)) {
                 $errors['slug'] = 'Slug already exists';
             }
             
+            // If no validation errors, attempt to update category
             if (empty($errors)) {
                 if ($this->categoryModel->update($id, $data)) {
+                    // Redirect to categories list on success
                     header('Location: /categories');
                     exit;
                 } else {
+                    // Set a general error message on failure
                     $errors['general'] = 'Failed to update category';
                 }
             }
             
+            // If there are errors, render the edit view with errors
             include __DIR__ . '/../views/categories/edit.php';
         } else {
+            // Redirect to the edit form if request method is not POST
             header('Location: /categories/edit/' . $id);
             exit;
         }
     }
     
-    // Delete category
+    /**
+     * Delete category
+     *
+     * @param int $id Category ID
+     */
     public function delete($id) {
-        ensureAuthenticated(); // Only authenticated users
+        // Only authenticated users
+        $this->ensureAuthenticated();
         
+        // Delete category
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->categoryModel->delete($id);
         }
+        // Redirect to categories list
         header('Location: /categories');
         exit;
     }
     
-    // Helper function to generate slug
+    /**
+     * Helper function to generate slug
+     *
+     * @param string $string String to generate slug from
+     * @return string Generated slug
+     */
+    /**
+     * Generate a URL-friendly slug from a given string.
+     *
+     * @param string $string The input string to generate a slug from.
+     * @return string The generated slug.
+     */
     private function generateSlug($string) {
+        // Convert the string to lowercase and trim whitespace
         $slug = strtolower(trim($string));
+        
+        // Replace non-alphanumeric characters with a dash
         $slug = preg_replace('/[^a-z0-9-]/', '-', $slug);
+        
+        // Replace multiple consecutive dashes with a single dash
         $slug = preg_replace('/-+/', '-', $slug);
+        
         return $slug;
     }
 }

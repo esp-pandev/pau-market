@@ -17,6 +17,24 @@ class HomeController {
         $this->loadView('home/index', $data);
     }
     
+    public function about() {
+        // Load view
+        $data = [
+            'title' => 'PAU-MARKET - About Us'
+        ];
+        
+        $this->loadView('home/about', $data);
+    }
+
+    public function contact() {
+        // Load view
+        $data = [
+            'title' => 'PAU-MARKET - Contact Us'
+        ];
+        
+        $this->loadView('home/countact', $data);
+    }
+    // Helper method to load views
     private function loadView($view, $data = []) {
         extract($data);
         require_once APP . DS . 'views' . DS . $view . '.php';

@@ -15,6 +15,7 @@ define('CONTROLLERS', APP . DS . 'controllers');
 define('MODELS', APP . DS . 'models');
 define('VIEWS', APP . DS . 'views');
 define('CONFIG', APP . DS . 'config');
+define('PAGES', VIEWS . DS . 'home'); // Add constant for pages directory
 
 // Verify and load configuration
 $configFile = CONFIG . DS . 'config.php';
@@ -66,7 +67,28 @@ function handleNotFound() {
 $url = isset($_GET['url']) ? rtrim($_GET['url'], '/') : DEFAULT_CONTROLLER . '/' . DEFAULT_ACTION;
 $urlParts = explode('/', filter_var($url, FILTER_SANITIZE_URL));
 
-// Route handling
+// NEW: Handle direct page requests (like about)
+if (count($urlParts) === 1 && $urlParts[0] === 'about') {
+    $pageFile = PAGES . DS . 'about.php';
+    if (file_exists($pageFile)) {
+        require_once $pageFile;
+        exit;
+    } else {
+        handleNotFound();
+    }
+}
+
+if (count($urlParts) === 1 && $urlParts[0] === 'contact') {
+    $pageFile = PAGES . DS . 'contact.php';
+    if (file_exists($pageFile)) {
+        require_once $pageFile;
+        exit;
+    } else {
+        handleNotFound();
+    }
+}
+
+// Original route handling
 $controllerName = ucfirst($urlParts[0]) . 'Controller';
 $actionName = isset($urlParts[1]) ? $urlParts[1] : DEFAULT_ACTION;
 

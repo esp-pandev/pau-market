@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $title; ?> | PAU-MARKET</title>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/auth.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/user_create.css">
 </head>
 <body class="auth-page">
     <div class="auth-container">
@@ -33,19 +33,21 @@
                 </div>
             </div>
             
-            <div class="form-group">
-                <label for="username">Username *</label>
-                <input type="text" id="username" name="username" 
-                       value="<?php echo htmlspecialchars($formData['username'] ?? ''); ?>" 
-                       required>
-                <small class="form-hint">Letters, numbers, and underscores only</small>
-            </div>
-            
-            <div class="form-group">
-                <label for="email">Email *</label>
-                <input type="email" id="email" name="email" 
-                       value="<?php echo htmlspecialchars($formData['email'] ?? ''); ?>" 
-                       required>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="username">Username *</label>
+                    <input type="text" id="username" name="username" 
+                        value="<?php echo htmlspecialchars($formData['username'] ?? ''); ?>" 
+                        required>
+                    <small class="form-hint">Letters, numbers, and underscores only</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" 
+                        value="<?php echo htmlspecialchars($formData['email'] ?? ''); ?>" 
+                        required>
+                </div>
             </div>
             
             <div class="form-row">
@@ -59,30 +61,32 @@
                     <input type="password" id="confirm_password" name="confirm_password" required>
                 </div>
             </div>
-            
-            <div class="form-group">
-                <label for="profile_image">Profile Image</label>
-                <input type="file" id="profile_image" name="profile_image" accept="image/*">
-                <small class="form-hint">JPG, PNG, or GIF (max 2MB)</small>
+            <div class="form-row">    
+                <div class="form-group">
+                    <label for="profile_image">Profile Image</label>
+                    <input type="file" id="profile_image" name="profile_image" accept="image/*">
+                    <small class="form-hint">JPG, PNG, or GIF (max 2MB)</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" 
+                        value="<?php echo htmlspecialchars($formData['phone'] ?? ''); ?>">
+                </div>
             </div>
-            
             <div class="form-group">
                 <label for="address">Address</label>
                 <textarea id="address" name="address" rows="3"><?php echo htmlspecialchars($formData['address'] ?? ''); ?></textarea>
             </div>
             
-            <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" 
-                       value="<?php echo htmlspecialchars($formData['phone'] ?? ''); ?>">
-            </div>
+            
             
             <button type="submit" class="btn btn-primary">Register</button>
-            
-            <div class="auth-footer">
-                Already have an account? <a href="<?php echo BASE_URL; ?>auth/login">Login here</a>
-            </div>
         </form>
     </div>
 </body>
 </html>
+<?php
+$content = ob_get_clean();
+include APP . DS . 'views' . DS . 'layouts' . DS . 'admin.php';
+?>

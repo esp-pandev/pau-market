@@ -1,14 +1,23 @@
 <?php
 require_once APP . DS . 'config' . DS . 'config.php';
 
+/**
+ * Category model
+ */
 class Category {
     private $db;
     
+    /**
+     * Constructor
+     */
     public function __construct() {
         $this->db = Database::getInstance();
         $this->checkAuth();
     }
     
+    /**
+     * Check if the user is logged in
+     */
     private function checkAuth() {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -21,26 +30,40 @@ class Category {
         }
     }
 
+    /**
+     * Check if a slug already exists
+     *
+     * @param string $slug
+     * @param int|null $excludeId
+     * @return bool
+     */
     public function slugExists($slug, $excludeId = null) {
-    try {
-        $sql = "SELECT COUNT(*) as count FROM categories WHERE slug = :slug";
-        $params = [':slug' => $slug];
-        
-        if ($excludeId !== null) {
-            $sql .= " AND id != :id";
-            $params[':id'] = $excludeId;
+        try {
+            $sql = "SELECT COUNT(*) as count FROM categories WHERE slug = :slug";
+            $params = [':slug' => $slug];
+            
+            if ($excludeId !== null) {
+                $sql .= " AND id != :id";
+                $params[':id'] = $excludeId;
+            }
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            return $result['count'] > 0;
+        } catch (PDOException $e) {
+            error_log("Error checking slug existence: " . $e->getMessage());
+            return false;
         }
-        
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        return $result['count'] > 0;
-    } catch (PDOException $e) {
-        error_log("Error checking slug existence: " . $e->getMessage());
-        return false;
     }
-}
+    
+    /**
+     * Create a new category
+     *
+     * @param array $data
+     * @return bool
+     */
     public function create($data) {
         try {
             $stmt = $this->db->prepare("INSERT INTO categories (name, slug, description) VALUES (:name, :slug, :description)");
@@ -54,6 +77,12 @@ class Category {
         }
     }
 
+    /**
+     * Get a category by ID
+     *
+     * @param int $id
+     * @return array|false
+     */
     public function getById($id) {
         try {
             $stmt = $this->db->prepare("SELECT * FROM categories WHERE id = :id");
@@ -66,6 +95,11 @@ class Category {
         }
     }
 
+    /**
+     * Get all categories
+     *
+     * @return array|false
+     */
     public function getAll() {
         try {
             $stmt = $this->db->query("SELECT * FROM categories ORDER BY name ASC");
@@ -76,6 +110,13 @@ class Category {
         }
     }
 
+    /**
+     * Update a category
+     *
+     * @param int $id
+     * @param array $data
+     * @return bool
+     */
     public function update($id, $data) {
         try {
             $stmt = $this->db->prepare("UPDATE categories SET name = :name, slug = :slug, description = :description, updated_at = NOW() WHERE id = :id");
@@ -90,6 +131,12 @@ class Category {
         }
     }
 
+    /**
+     * Delete a category
+     *
+     * @param int $id
+     * @return bool
+     */
     public function delete($id) {
         try {
             $stmt = $this->db->prepare("DELETE FROM categories WHERE id = :id");
@@ -101,6 +148,12 @@ class Category {
         }
     }
 
+    /**
+     * Get a category by slug
+     *
+     * @param string $slug
+     * @return array|false
+     */
     public function getBySlug($slug) {
         try {
             $stmt = $this->db->prepare("SELECT * FROM categories WHERE slug = :slug");
@@ -113,6 +166,11 @@ class Category {
         }
     }
 
+    /**
+     * Count the total number of categories
+     *
+     * @return int|false
+     */
     public function countAll() {
         try {
             $stmt = $this->db->query("SELECT COUNT(*) as total FROM categories");
@@ -124,6 +182,12 @@ class Category {
         }
     }
 
+    /**
+     * Search for categories
+     *
+     * @param string $keyword
+     * @return array|false
+     */
     public function search($keyword) {
         try {
             $stmt = $this->db->prepare("SELECT * FROM categories WHERE name LIKE :keyword OR description LIKE :keyword ORDER BY name ASC");
@@ -137,6 +201,13 @@ class Category {
         }
     }
 
+    /**
+     * Get a paginated list of categories
+     *
+     * @param int $page
+     * @param int $limit
+     * @return array|false
+     */
     public function getPaginated($page = 1, $limit = 10) {
         try {
             $offset = ($page - 1) * $limit;
@@ -151,4 +222,3 @@ class Category {
         }
     }
 }
-?>

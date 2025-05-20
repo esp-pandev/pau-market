@@ -6,6 +6,26 @@
     <title><?php echo $title; ?> | PAU-MARKET</title>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!--plugins-->
+   <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/libraries/plugins/simplebar/css/simplebar.css">
+   <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/libraries/plugins/perfect-scrollbar/css/perfect-scrollbar.css">
+   <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/libraries/plugins/metismenu/css/metisMenu.min.css">
+   <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/libraries/plugins/datatable/css/dataTables.bootstrap5.min.css">
+
+	<!-- loader-->
+	<link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/libraries/css/pace.min.css">
+    <link href="<?php echo BASE_URL; ?>assets/libraries/js/pace.min.js">
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/libraries/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/libraries/css/bootstrap-extended.css">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/libraries/css/app.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/libraries/css/icons.css">
+	<!-- Theme Style CSS -->
+	<link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/libraries/css/dark-theme.css">
+	<link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/libraries/css/semi-dark.css">
+	<link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/libraries/css/header-colors.css">
 </head>
 <body class="admin-dashboard">
     <!-- Sidebar -->

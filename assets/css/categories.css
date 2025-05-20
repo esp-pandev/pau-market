@@ -1,0 +1,217 @@
+/* Main container styling */
+.users-management {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    margin-left: 250px;
+    margin-top: 5px; /* Increased to clear fixed header */
+    margin-right: 20px;
+    width: calc(100% - 270px);
+    position: relative;
+    z-index: 1;
+    min-height: calc(100vh - 180px);
+}
+
+
+/* Header section */
+.users-management .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-top: 20px; /* Extra padding at top */
+    position: sticky;
+    top: 80px; /* Adjust based on your admin header height */
+    background: white;
+    z-index: 10;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.users-management .header h1 {
+    color: #333;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.users-management .header .btn-primary {
+    background-color: #4e73df;
+    border-color: #4e73df;
+    color: white;
+    padding: 8px 15px;
+    font-size: 14px;
+    border-radius: 4px;
+    text-decoration: none;
+    position: sticky;
+    top: 80px; /* Same as header */
+    z-index: 10;
+}
+
+.users-management .header .btn-primary:hover {
+    background-color: #3a5ec0;
+    border-color: #3a5ec0;
+}
+
+body {
+    padding-top: 80px;
+}
+
+
+/* Card styling */
+.users-management .card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.users-management .card-body {
+    padding: 20px;
+}
+
+/* Table styling */
+.users-management .table-responsive {
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.users-management .table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+    border-collapse: collapse;
+}
+
+.users-management .table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #e3e6f0;
+    background-color: #f8f9fc;
+    color: #4e73df;
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.users-management .table td, 
+.users-management .table th {
+    padding: 12px 15px;
+    vertical-align: middle;
+    border-top: 1px solid #e3e6f0;
+}
+
+.users-management .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.users-management .table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Action buttons styling */
+.users-management .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.users-management .btn {
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.users-management .btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.users-management .btn-info {
+    background-color: #36b9cc;
+    color: white;
+}
+
+.users-management .btn-info:hover {
+    background-color: #2c9faf;
+}
+
+.users-management .btn-warning {
+    background-color: #f6c23e;
+    color: #212529;
+}
+
+.users-management .btn-warning:hover {
+    background-color: #e4b030;
+}
+
+.users-management .btn-danger {
+    background-color: #e74a3b;
+    color: white;
+}
+
+.users-management .btn-danger:hover {
+    background-color: #d23a2b;
+}
+
+/* Alert message styling */
+.users-management .alert {
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.users-management .alert.success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.users-management .alert.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+/* Form elements */
+.users-management form.d-inline {
+    display: inline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .users-management {
+        margin-left: 20px;
+        width: calc(100% - 40px);
+    }
+}
+
+@media (max-width: 768px) {
+    .users-management .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .users-management .actions {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .users-management .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Make sure content clears fixed header */
+body {
+    padding-top: 80px; /* Should match your header height */
+}

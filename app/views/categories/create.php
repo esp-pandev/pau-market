@@ -1,6 +1,16 @@
-<?php require_once APP . DS . 'views' . DS . 'partials' . DS . 'header.php'; ?>
-
-<div class="container">
+<?php
+$title = "Manage Categories";
+$activePage = "categories"; 
+ob_start();
+?>
+<html>
+<head>
+    <title><?= $title ?></title>
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/create_categories.css">
+    <script src="<?php echo BASE_URL; ?>assets/js/admin.js"></script>
+</head>
+<body>
+    <div class="container">
     <h1 class="my-4">Create New Category</h1>
     
     <form action="<?= BASE_URL ?>categories/store" method="POST">
@@ -21,5 +31,9 @@
         <a href="<?= BASE_URL ?>categories" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
-
-<?php require_once APP . DS . 'views' . DS . 'partials' . DS . 'footer.php'; ?>
+</body>
+</html>
+<?php
+$content = ob_get_clean();
+include APP . DS . 'views' . DS . 'layouts' . DS . 'admin.php';
+?>
