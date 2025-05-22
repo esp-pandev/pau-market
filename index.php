@@ -88,6 +88,23 @@ if (count($urlParts) === 1 && $urlParts[0] === 'contact') {
     }
 }
 
+// Handle /categories/{id} pattern
+if (count($urlParts) === 2 && $urlParts[0] === 'categories' && is_numeric($urlParts[1])) {
+    $controllerName = 'CategoriesController';
+    $actionName = 'show';
+    $params = [$urlParts[1]];
+    
+    $controllerFile = CONTROLLERS . DS . $controllerName . '.php';
+    if (file_exists($controllerFile)) {
+        require_once $controllerFile;
+        if (method_exists($controllerName, $actionName)) {
+            $controller = new $controllerName($db);
+            call_user_func_array([$controller, $actionName], $params);
+            exit;
+        }
+    }
+}
+
 // Original route handling
 $controllerName = ucfirst($urlParts[0]) . 'Controller';
 $actionName = isset($urlParts[1]) ? $urlParts[1] : DEFAULT_ACTION;

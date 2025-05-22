@@ -76,58 +76,116 @@ class CategoriesController {
         require VIEWS . DS . 'categories' . DS . 'create.php';
     }
     
-    /**
-     * Store new category
-     */
-    /**
+        /**
      * Store new category
      *
-     * Handles form submission and validates the data
+     * Handles form submission, validates data, and creates new category
+     * Redirects on success or shows form with errors on failure
      */
     public function store() {
+    // Only authenticated users
+    $this->ensureAuthenticated();
+    
+    // Start session if not already started
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    // Validate and store new category
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Gather and sanitize input data
+        $data = [
+            'name' => trim($_POST['name']),
+            'slug' => $this->generateSlug(trim($_POST['name'])),
+            'description' => trim($_POST['description'])
+        ];
+        
+        // Validate
+        $errors = [];
+        if (empty($data['name'])) {
+            $errors['name'] = 'Name is required';
+        }
+        
+        if ($this->categoryModel->slugExists($data['slug'])) {
+            $errors['slug'] = 'Slug already exists';
+        }
+        
+        if (empty($errors)) {
+            // Attempt to create category
+            if ($this->categoryModel->create($data)) {
+                // Set success message in session
+                $_SESSION['flash_message'] = [
+                    'type' => 'success',
+                    'text' => 'Category added successfully!'
+                ];
+                // Redirect on success
+                header('Location: ' . BASE_URL . 'categories');
+                exit;
+            } else {
+                $errors['general'] = 'Failed to create category';
+            }
+        }
+        
+        // Store errors and form data in session for repopulation
+        $_SESSION['form_errors'] = $errors;
+        $_SESSION['form_data'] = $data;
+        header('Location: ' . BASE_URL . 'categories/create');
+        exit;
+    } else {
+        // Redirect to create form
+        header('Location: ' . BASE_URL . 'categories/create');
+        exit;
+    }
+}
+
+    /**
+     * Validate category data
+     *
+     * @param array $data Category data to validate
+     * @return array Array of validation errors
+     */
+    private function validateCategoryData($data) {
+        $errors = [];
+        
+        // Name validation
+        if (empty($data['name'])) {
+            $errors['name'] = 'Name is required';
+        } elseif (strlen($data['name']) > 255) {
+            $errors['name'] = 'Name cannot exceed 255 characters';
+        }
+        
+        // Slug validation
+        if ($this->categoryModel->slugExists($data['slug'])) {
+            $errors['slug'] = 'This name would create a duplicate slug. Please choose a different name.';
+        }
+        
+        // Description validation
+        if (!empty($data['description']) && strlen($data['description']) > 2000) {
+            $errors['description'] = 'Description cannot exceed 2000 characters';
+        }
+        
+        return $errors;
+    }
+
+        /**
+     * Show category details
+     *
+     * @param int $id Category ID
+     */
+    public function show($id) {
         // Only authenticated users
         $this->ensureAuthenticated();
         
-        // Validate and store new category
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Gather and sanitize input data
-            $data = [
-                'name' => trim($_POST['name']),
-                'slug' => $this->generateSlug(trim($_POST['name'])),
-                'description' => trim($_POST['description'])
-            ];
-            
-            // Validate
-            $errors = [];
-            if (empty($data['name'])) {
-                // Name is required
-                $errors['name'] = 'Name is required';
-            }
-            
-            if ($this->categoryModel->slugExists($data['slug'])) {
-                // Prevent slug duplicates
-                $errors['slug'] = 'Slug already exists';
-            }
-            
-            if (empty($errors)) {
-                // Attempt to create category
-                if ($this->categoryModel->create($data)) {
-                    // Redirect on success
-                    header('Location: /categories');
-                    exit;
-                } else {
-                    // Handle failed create
-                    $errors['general'] = 'Failed to create category';
-                }
-            }
-            
-            // Render view with errors
-            include __DIR__ . '/../views/categories/create.php';
-        } else {
-            // Redirect to create form
-            header('Location: ' . BASE_URL . 'categories/create');
+        // Get category
+        $category = $this->categoryModel->getById($id);
+        if (!$category) {
+            // Redirect to categories list if not found
+            header('Location: /categories');
             exit;
         }
+        
+        // Render view
+        require VIEWS . DS . 'categories' . DS . 'show.php';
     }
     
     /**
@@ -148,7 +206,7 @@ class CategoriesController {
         }
         
         // Render view
-        include __DIR__ . '/../views/categories/edit.php';
+        require VIEWS . DS . 'categories' . DS . 'edit.php';
     }
     
     /**
@@ -169,7 +227,7 @@ class CategoriesController {
         $category = $this->categoryModel->getById($id);
         if (!$category) {
             // Redirect to categories list if category not found
-            header('Location: /categories');
+            header('Location: ' . BASE_URL . 'categories');
             exit;
         }
         
@@ -199,7 +257,7 @@ class CategoriesController {
             if (empty($errors)) {
                 if ($this->categoryModel->update($id, $data)) {
                     // Redirect to categories list on success
-                    header('Location: /categories');
+                    header('Location: ' . BASE_URL . 'categories');
                     exit;
                 } else {
                     // Set a general error message on failure
@@ -230,7 +288,7 @@ class CategoriesController {
             $this->categoryModel->delete($id);
         }
         // Redirect to categories list
-        header('Location: /categories');
+        header('Location: ' . BASE_URL . 'categories');
         exit;
     }
     

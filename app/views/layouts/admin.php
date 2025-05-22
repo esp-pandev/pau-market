@@ -31,6 +31,8 @@ $activePage = $activePage ?? 'dashboard'; // Default to 'dashboard' if not defin
 	<link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/libraries/css/dark-theme.css">
 	<link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/libraries/css/semi-dark.css">
 	<link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/libraries/css/header-colors.css">
+
+	<link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/show_categories.css">
 </head>
 <body>
 	<div class="wrapper">

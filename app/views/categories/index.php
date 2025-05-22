@@ -9,6 +9,21 @@ ob_start();
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/categories.css">
     <script src="<?php echo BASE_URL; ?>assets/js/admin.js"></script>
 </head>
+<?php
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Display flash message if exists
+if (isset($_SESSION['flash_message'])) {
+    echo '<div class="alert ' . $_SESSION['flash_message']['type'] . '">' 
+         . htmlspecialchars($_SESSION['flash_message']['text']) 
+         . '</div>';
+    // Remove the message so it doesn't show again
+    unset($_SESSION['flash_message']);
+}
+?>
 <body>
     <div class="users-management">
     <div class="header">
@@ -32,6 +47,7 @@ ob_start();
                                 <tr>
                                     <th>Name</th>
                                     <th>Slug</th>
+                                    <th>Description</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -40,11 +56,12 @@ ob_start();
                                 <tr>
                                     <td><?= htmlspecialchars($category['name']) ?></td>
                                     <td><?= htmlspecialchars($category['slug']) ?></td>
+                                    <td><?= htmlspecialchars($category['description']) ?></td>
                                     <td>
                                         <div class="actions">
-                                            <a href="<?= BASE_URL ?>categories/<?= $category['id'] ?>" class="btn btn-sm btn-info">View</a>
-                                            <a href="<?= BASE_URL ?>categories/<?= $category['id'] ?>/edit" class="btn btn-sm btn-warning">Edit</a>
-                                            <form action="<?= BASE_URL ?>categories/<?= $category['id'] ?>/delete" method="POST" class="d-inline">
+                                            <a href="<?= BASE_URL ?>categories/show/<?= $category['id'] ?>" class="btn btn-sm btn-info">View</a>
+                                            <a href="<?= BASE_URL ?>categories/edit/<?= $category['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
+                                            <form action="<?= BASE_URL ?>categories/delete/<?= $category['id'] ?>" method="POST" class="d-inline">
                                                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
                                             </form>
                                         </div>
