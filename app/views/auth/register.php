@@ -77,10 +77,7 @@
             <div class="form-group">
                 <label for="address">Address</label>
                 <textarea id="address" name="address" rows="3"><?php echo htmlspecialchars($formData['address'] ?? ''); ?></textarea>
-            </div>
-            
-            
-            
+            </div>           
             <button type="submit" class="btn btn-primary">Register</button>
         </form>
     </div>

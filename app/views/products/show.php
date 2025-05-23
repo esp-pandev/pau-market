@@ -1,4 +1,8 @@
-<?php include 'partials/header.php'; ?>
+<?php
+$title = "Product Details: " . htmlspecialchars($product['name']);
+$activePage = "products";
+ob_start();
+?>
 
 <div class="container">
     <h1><?= $product['name'] ?></h1>
@@ -14,13 +18,19 @@
             <p><?= nl2br($product['description']) ?></p>
             
             <div class="mt-4">
-                <a href="/products/<?= $product['id'] ?>/edit" class="btn btn-warning">Edit</a>
-                <form action="/products/<?= $product['id'] ?>/delete" method="POST" class="d-inline">
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                <a href="<?= BASE_URL ?>products/edit/<?= $product['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
+                <form action="<?= BASE_URL ?>products/delete/<?= $product['id'] ?>" method="POST" class="d-inline">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn btn-sm btn-danger" 
+                            onclick="return confirm('Are you sure you want to delete this product?')">
+                            Delete
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
-<?php include 'partials/footer.php'; ?>
+<?php
+$content = ob_get_clean();
+include APP . DS . 'views' . DS . 'layouts' . DS . 'admin.php';
+?>

@@ -38,6 +38,14 @@ class User {
         
         return false;
     }
+
+    // Delete a product
+    public function delete($id) {
+        $query = "DELETE FROM users WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
     
     // Find user by field
     public function find($value, $field = 'id') {

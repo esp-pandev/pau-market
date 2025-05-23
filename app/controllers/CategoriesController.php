@@ -214,11 +214,6 @@ class CategoriesController {
      *
      * @param int $id Category ID
      */
-    /**
-     * Update category
-     *
-     * @param int $id Category ID
-     */
     public function update($id) {
         // Ensure user is authenticated
         $this->ensureAuthenticated();
@@ -292,12 +287,7 @@ class CategoriesController {
         exit;
     }
     
-    /**
-     * Helper function to generate slug
-     *
-     * @param string $string String to generate slug from
-     * @return string Generated slug
-     */
+    
     /**
      * Generate a URL-friendly slug from a given string.
      *

@@ -1,11 +1,12 @@
 <?php
 class HomeController {
+    
     public function index() {
         // Get database connection
         $db = Database::getInstance();
         
         // You can fetch data here if needed
-        // $statement = $db->query("SELECT * FROM products LIMIT 5");
+        //$statement = $db->query("SELECT * FROM products LIMIT 5");
         // $products = $statement->fetchAll();
         
         // Load view
@@ -26,13 +27,31 @@ class HomeController {
         $this->loadView('home/about', $data);
     }
 
+    // Public view (anonymous)
+    public function productDisplay() {
+        // Get database connection
+        $db = Database::getInstance();
+        
+        // You can fetch data here if needed
+        $statement = $db->query("SELECT * FROM products");
+        $products = $statement->fetchAll();
+        
+        // Load view
+        $data = [
+            'title' => 'PAU-MARKET - Home',
+            'products' => $products
+        ];
+        
+        $this->loadView('home/productDisplay', $data);
+    }
+
     public function contact() {
         // Load view
         $data = [
             'title' => 'PAU-MARKET - Contact Us'
         ];
         
-        $this->loadView('home/countact', $data);
+        $this->loadView('home/contact', $data);
     }
     // Helper method to load views
     private function loadView($view, $data = []) {

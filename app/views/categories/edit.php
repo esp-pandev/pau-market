@@ -26,11 +26,9 @@ ob_start();
     <script src="<?php echo BASE_URL; ?>assets/js/admin.js"></script>
 </head>
 <body>
-    <div class="categories-management">
-        <div class="header">
-            <h1>Edit Category: <?= htmlspecialchars($category['name']) ?></h1>
-            <a href="<?= BASE_URL ?>categories" class="btn btn-secondary">Back to List</a>
-        </div>
+    <div class="edit-category-container">
+        <h1 class="page-title">Edit Category: <?= htmlspecialchars($category['name']) ?></h1>
+        <a href="<?= BASE_URL ?>categories" class="back-link">← Back to List</a>
 
         <?php if ($successMessage): ?>
             <div class="alert success">
@@ -50,43 +48,41 @@ ob_start();
             <div class="alert error"><?= htmlspecialchars($errors['general']) ?></div>
         <?php endif; ?>
 
-        <div class="card">
-            <div class="card-body">
-                <form action="<?= BASE_URL ?>categories/update/<?= $category['id'] ?>" method="POST" class="category-form">
-                    <div class="form-group">
-                        <label for="name">Name*</label>
-                        <input type="text" name="name" id="name" class="form-control <?= isset($errors['name']) ? 'is-invalid' : '' ?>" 
-                               value="<?= isset($data['name']) ? htmlspecialchars($data['name']) : htmlspecialchars($category['name']) ?>" required>
-                        <?php if (isset($errors['name'])): ?>
-                            <small class="text-danger"><?= htmlspecialchars($errors['name']) ?></small>
-                        <?php endif; ?>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="slug">Slug</label>
-                        <input type="text" name="slug" id="slug" class="form-control" 
-                               value="<?= htmlspecialchars($category['slug']) ?>" readonly>
-                        <?php if (isset($errors['slug'])): ?>
-                            <small class="text-danger"><?= htmlspecialchars($errors['slug']) ?></small>
-                        <?php endif; ?>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea name="description" id="description" class="form-control" rows="4"><?= 
-                            isset($data['description']) ? htmlspecialchars($data['description']) : htmlspecialchars($category['description']) 
-                        ?></textarea>
-                        <?php if (isset($errors['description'])): ?>
-                            <small class="text-danger"><?= htmlspecialchars($errors['description']) ?></small>
-                        <?php endif; ?>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Update Category</button>
-                        <a href="<?= BASE_URL ?>categories" class="btn btn-secondary">Cancel</a>
-                    </div>
-                </form>
-            </div>
+        <div class="edit-form-wrapper">
+            <form action="<?= BASE_URL ?>categories/update/<?= $category['id'] ?>" method="POST" class="edit-category-form">
+                <div class="form-group">
+                    <label for="name">Name*</label>
+                    <input type="text" name="name" id="name" class="form-control <?= isset($errors['name']) ? 'is-invalid' : '' ?>" 
+                           value="<?= isset($data['name']) ? htmlspecialchars($data['name']) : htmlspecialchars($category['name']) ?>" required>
+                    <?php if (isset($errors['name'])): ?>
+                        <small class="text-danger"><?= htmlspecialchars($errors['name']) ?></small>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="form-group">
+                    <label for="slug">Slug</label>
+                    <input type="text" name="slug" id="slug" class="form-control" 
+                           value="<?= htmlspecialchars($category['slug']) ?>" readonly>
+                    <?php if (isset($errors['slug'])): ?>
+                        <small class="text-danger"><?= htmlspecialchars($errors['slug']) ?></small>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea name="description" id="description" class="form-control" rows="4"><?= 
+                        isset($data['description']) ? htmlspecialchars($data['description']) : htmlspecialchars($category['description']) 
+                    ?></textarea>
+                    <?php if (isset($errors['description'])): ?>
+                        <small class="text-danger"><?= htmlspecialchars($errors['description']) ?></small>
+                    <?php endif; ?>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Update Category</button>
+                    <button type="button" onclick="window.location.href='<?= BASE_URL ?>categories'" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
         </div>
     </div>
 

@@ -7,83 +7,138 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Define base path
+// Define base path constants
 define('ROOT', dirname(__FILE__));
 define('DS', DIRECTORY_SEPARATOR);
 define('APP', ROOT . DS . 'app');
+define('CONTROLLERS', APP . DS . 'controllers');
+define('MODELS', APP . DS . 'models');
+define('VIEWS', APP . DS . 'views');
+define('CONFIG', APP . DS . 'config');
+define('PAGES', VIEWS . DS . 'home'); // Add constant for pages directory
 
-// Verify config file exists
-if (!file_exists(APP . DS . 'config' . DS . 'config.php')) {
+// Verify and load configuration
+$configFile = CONFIG . DS . 'config.php';
+if (!file_exists($configFile)) {
     die('Configuration file missing!');
 }
-
-// Load configuration
-require_once APP . DS . 'config' . DS . 'config.php';
+require_once $configFile;
 
 // Get database connection
 $db = Database::getInstance();
 
-// Simple autoloader
+// Enhanced autoloader
 spl_autoload_register(function($className) {
-    $file = APP . DS . 'controllers' . DS . $className . '.php';
-    if (file_exists($file)) {
-        require_once $file;
+    $paths = [
+        CONTROLLERS . DS . $className . '.php',
+        MODELS . DS . $className . '.php'
+    ];
+    
+    foreach ($paths as $path) {
+        if (file_exists($path)) {
+            require_once $path;
+            return;
+        }
     }
 });
 
-// Default route
-$url = isset($_GET['url']) ? $_GET['url'] : DEFAULT_CONTROLLER . '/' . DEFAULT_ACTION;
-$urlParts = explode('/', rtrim($url, '/'));
-
-// Handle categories routes
-if ($urlParts[0] === 'categories') {
-    $controllerName = 'CategoriesController';
-    $actionName = isset($urlParts[1]) ? $urlParts[1] : 'index';
+/**
+ * Handle 404 errors
+ */
+function handleNotFound() {
+    header("HTTP/1.0 404 Not Found");
     
-    // Handle routes with IDs (like edit/1, delete/1)
-    if (isset($urlParts[2]) && is_numeric($urlParts[2])) {
-        $id = (int)$urlParts[2];
-        $actionName = $urlParts[1]; // edit or delete
-        
-        require_once APP . DS . 'controllers' . DS . $controllerName . '.php';
-        $controller = new $controllerName($db);
-        
-        if (method_exists($controller, $actionName)) {
-            $controller->$actionName($id);
+    // Check if HomeController exists and has notFound method
+    $homeControllerPath = CONTROLLERS . DS . 'HomeController.php';
+    if (file_exists($homeControllerPath)) {
+        require_once $homeControllerPath;
+        if (method_exists('HomeController', 'notFound')) {
+            $homeController = new HomeController(Database::getInstance());
+            $homeController->notFound();
             exit;
         }
     }
     
-    // Standard categories routes (create, store, etc.)
-    require_once APP . DS . 'controllers' . DS . $controllerName . '.php';
-    
-    if (!method_exists($controllerName, $actionName)) {
-        $actionName = 'index'; // Fallback to index
-    }
-    
-    $controller = new $controllerName($db);
-    $controller->$actionName();
-    exit;
+    // Fallback to simple 404 message
+    die('404 - Page Not Found');
 }
 
-// Standard routing for other controllers
+// Sanitize and parse URL
+$url = isset($_GET['url']) ? rtrim($_GET['url'], '/') : DEFAULT_CONTROLLER . '/' . DEFAULT_ACTION;
+$urlParts = explode('/', filter_var($url, FILTER_SANITIZE_URL));
+
+// NEW: Handle direct page requests (like about)
+if (count($urlParts) === 1 && $urlParts[0] === 'about') {
+    $pageFile = PAGES . DS . 'about.php';
+    if (file_exists($pageFile)) {
+        require_once $pageFile;
+        exit;
+    } else {
+        handleNotFound();
+    }
+}
+/*
+if (count($urlParts) === 1 && $urlParts[0] === 'productDisplay') {
+    $pageFile = PAGES . DS . 'productDisplay.php';
+    if (file_exists($pageFile)) {
+        require_once $pageFile;
+        exit;
+    } else {
+        handleNotFound();
+    }
+}*/
+if (count($urlParts) === 1 && $urlParts[0] === 'contact') {
+    $pageFile = PAGES . DS . 'contact.php';
+    if (file_exists($pageFile)) {
+        require_once $pageFile;
+        exit;
+    } else {
+        handleNotFound();
+    }
+}
+
+// Handle /categories/{id} pattern
+if (count($urlParts) === 2 && $urlParts[0] === 'categories' && is_numeric($urlParts[1])) {
+    $controllerName = 'CategoriesController';
+    $actionName = 'show';
+    $params = [$urlParts[1]];
+    
+    $controllerFile = CONTROLLERS . DS . $controllerName . '.php';
+    if (file_exists($controllerFile)) {
+        require_once $controllerFile;
+        if (method_exists($controllerName, $actionName)) {
+            $controller = new $controllerName($db);
+            call_user_func_array([$controller, $actionName], $params);
+            exit;
+        }
+    }
+}
+
+// Original route handling
 $controllerName = ucfirst($urlParts[0]) . 'Controller';
 $actionName = isset($urlParts[1]) ? $urlParts[1] : DEFAULT_ACTION;
 
+// Handle parameters
+$params = array_slice($urlParts, 2);
+
 // Verify controller exists
-if (!file_exists(APP . DS . 'controllers' . DS . $controllerName . '.php')) {
-    header('Location: ' . BASE_URL . 'home/notfound');
-    exit;
+$controllerFile = CONTROLLERS . DS . $controllerName . '.php';
+if (!file_exists($controllerFile)) {
+    handleNotFound();
 }
 
-require_once APP . DS . 'controllers' . DS . $controllerName . '.php';
+require_once $controllerFile;
 
 // Verify method exists
 if (!method_exists($controllerName, $actionName)) {
-    header('Location: ' . BASE_URL . 'home/notfound');
-    exit;
+    handleNotFound();
 }
 
-// Execute
-$controller = new $controllerName($db);
-$controller->$actionName();
+// Instantiate and execute
+try {
+    $controller = new $controllerName($db);
+    call_user_func_array([$controller, $actionName], $params);
+} catch (Exception $e) {
+    error_log("Controller error: " . $e->getMessage());
+    handleNotFound();
+}

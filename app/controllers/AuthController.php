@@ -50,8 +50,8 @@ class AuthController {
                 
                 // Create user
                 if ($this->userModel->create($userData)) {
-                    $_SESSION['success'] = "Registration successful! You can now login";
-                    header('Location: ' . BASE_URL . 'auth/login');
+                    $_SESSION['success'] = "User registered successfully.";
+                    header('Location: ' . BASE_URL . 'admin/users');
                     exit;
                 }
                 

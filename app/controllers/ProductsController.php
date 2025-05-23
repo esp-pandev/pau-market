@@ -10,7 +10,6 @@ class ProductsController {
         $this->categoryModel = new Category($db);
     }
 
-
     public function ensureAuthenticated() {
         // Start session if not already started
         if (session_status() === PHP_SESSION_NONE) {
@@ -34,6 +33,14 @@ class ProductsController {
         $this->ensureAuthenticated();
 
         $products = $this->productModel->getAllProducts();
+        // Get all categories from Category model
+        $categories = $this->categoryModel->getAll();
+        
+        // Create a category map for quick lookup
+        $categoryMap = [];
+        foreach ($categories as $category) {
+            $categoryMap[$category['id']] = $category['name'];
+        }
         require VIEWS . DS . 'products' . DS . 'index.php';
     }
 
@@ -41,7 +48,7 @@ class ProductsController {
     public function show($id) {
         $product = $this->productModel->getProductById($id);
         if ($product) {
-            include 'views/products/show.php';
+            require VIEWS . DS . 'products' . DS . 'show.php';
         } else {
             header("HTTP/1.0 404 Not Found");
             include 'views/errors/404.php';
@@ -85,7 +92,7 @@ class ProductsController {
                 'price' => $_POST['price'],
                 'quantity_available' => $_POST['quantity_available'] ?? 0,
                 'unit' => $_POST['unit'] ?? 'kg',
-                'image' => $this->handleImageUpload()
+                'image' => $this->handleImageUpload($_FILES['image'], null) // Pass null for product_id when creating
             ];
 
             // Validate data
@@ -93,7 +100,7 @@ class ProductsController {
             if (empty($errors)) {
                 if ($this->productModel->createProduct($data)) {
                     $_SESSION['message'] = 'Product created successfully';
-                    header('Location: /products');
+                    header('Location: ' . BASE_URL . 'products');
                     exit();
                 } else {
                     $errors[] = 'Failed to create product';
@@ -101,24 +108,45 @@ class ProductsController {
             }
 
             // If errors, show form again with errors
+            $categories = $this->categoryModel->getAll();
             include 'views/products/create.php';
         }
     }
 
-    // Show edit form
-    public function edit($id) {
-        $product = $this->productModel->getProductById($id);
-        if ($product) {
-            include 'views/products/edit.php';
-        } else {
-            header("HTTP/1.0 404 Not Found");
-            include 'views/errors/404.php';
-        }
+/**
+ * Show edit form
+ *
+ * @param int $id Product ID
+ */
+public function edit($id) {
+    // Only authenticated users
+    $this->ensureAuthenticated();
+    
+    // Get product
+    $product = $this->productModel->getProductById($id);
+    if (!$product) {
+        // Redirect to products list
+        header('Location: ' . BASE_URL . 'products');
+        exit;
     }
+    
+    // Get all categories for the dropdown
+    $categories = $this->categoryModel->getAll(); // Make sure you have this method
+    
+    // Render view with both product and categories
+    $product = $product;
+    $categories = $categories;
+    require VIEWS . DS . 'products' . DS . 'edit.php';
+}
 
     // Update product
     public function update($id) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->ensureAuthenticated();
+
+            // Get existing product data first
+            $existingProduct = $this->productModel->getProductById($id);
+            
             $data = [
                 'category_id' => $_POST['category_id'],
                 'name' => $_POST['name'],
@@ -127,15 +155,41 @@ class ProductsController {
                 'price' => $_POST['price'],
                 'quantity_available' => $_POST['quantity_available'] ?? 0,
                 'unit' => $_POST['unit'] ?? 'kg',
-                'image' => $this->handleImageUpload($_FILES['image'], $id)
+                'image' => $existingProduct['image_path'] // Keep existing image by default
             ];
+
+            // Handle image upload if a new file was provided
+            if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                $newImage = $this->handleImageUpload($_FILES['image'], $id);
+                if ($newImage) {
+                    // Delete old image if it exists
+                    if (!empty($existingProduct['image_path'])) {
+                        $oldImagePath = $_SERVER['DOCUMENT_ROOT'] . $existingProduct['image_path'];
+                        if (file_exists($oldImagePath)) {
+                            unlink($oldImagePath);
+                        }
+                    }
+                    $data['image'] = $newImage;
+                }
+            }
+
+            // Handle image removal if checkbox is checked
+            if (isset($_POST['remove_image']) && $_POST['remove_image'] === 'on') {
+                if (!empty($existingProduct['image_path'])) {
+                    $oldImagePath = $_SERVER['DOCUMENT_ROOT'] . $existingProduct['image_path'];
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
+                }
+                $data['image'] = null;
+            }
 
             // Validate data
             $errors = $this->validateProductData($data, $id);
             if (empty($errors)) {
                 if ($this->productModel->updateProduct($id, $data)) {
-                    $_SESSION['message'] = 'Product updated successfully';
-                    header('Location: /products/' . $id);
+                    $_SESSION['success_message'] = 'Product updated successfully';
+                    header('Location: ' . BASE_URL . 'products');
                     exit();
                 } else {
                     $errors[] = 'Failed to update product';
@@ -144,19 +198,30 @@ class ProductsController {
 
             // If errors, show form again with errors
             $product = $this->productModel->getProductById($id);
-            include 'views/products/edit.php';
+            $categories = $this->categoryModel->getAll();
+            
+            // Pass variables to the view
+            $product = $product;
+            $categories = $categories;
+            $errors = $errors;
+            require VIEWS . DS . 'products' . DS . 'edit.php';
         }
     }
 
     // Delete product
-    public function destroy($id) {
-        if ($this->productModel->deleteProduct($id)) {
-            $_SESSION['message'] = 'Product deleted successfully';
-        } else {
-            $_SESSION['error'] = 'Failed to delete product';
+    public function delete($id) {
+        // Only authenticated users
+        $this->ensureAuthenticated();
+        
+        // Delete category
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->productModel->delete($id);
         }
-        header('Location: /products');
+        // Redirect to categories list
+        header('Location: ' . BASE_URL . 'products');
+        exit;
     }
+
 
     // Helper method to generate slug
     private function generateSlug($name) {
@@ -207,42 +272,38 @@ class ProductsController {
     }
 
     // Helper method to handle image upload
-    private function handleImageUpload($file = null, $product_id = null) {
-        // Default image if none uploaded
-        $defaultImage = 'default-product.jpg';
-        
-        if ($file && $file['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = 'public/uploads/products/';
-            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-            $maxSize = 2 * 1024 * 1024; // 2MB
-            
-            // Validate file type and size
-            if (in_array($file['type'], $allowedTypes) && $file['size'] <= $maxSize) {
-                // Generate unique filename
-                $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-                $filename = uniqid('product_') . '.' . $extension;
-                
-                // Move uploaded file
-                if (move_uploaded_file($file['tmp_name'], $uploadDir . $filename)) {
-                    // Delete old image if exists and not default
-                    if ($product_id) {
-                        $product = $this->productModel->getProductById($product_id);
-                        if ($product['image'] && $product['image'] !== $defaultImage) {
-                            @unlink($uploadDir . $product['image']);
-                        }
-                    }
-                    return $filename;
-                }
-            }
+    protected function handleImageUpload($file, $product_id = null) {
+        // If no file was uploaded or there was an error, return null
+        if (!isset($file['error']) || $file['error'] !== UPLOAD_ERR_OK) {
+            return null;
         }
+
+        // Check if the uploads directory exists, create it if not
+        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/pau-market/public/uploads/products/';
         
-        // Return existing image if no new upload
-        if ($product_id) {
-            $product = $this->productModel->getProductById($product_id);
-            return $product['image'] ?? $defaultImage;
+        // Create directory if it doesn't exist (with proper permissions)
+        if (!file_exists($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
         }
-        
-        return $defaultImage;
+
+        // Validate file type
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        if (!in_array($file['type'], $allowedTypes)) {
+            return null;
+        }
+
+        // Generate unique filename
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = 'product_' . uniqid() . '.' . $extension;
+        $destination = $uploadDir . $filename;
+
+        // Move the uploaded file
+        if (move_uploaded_file($file['tmp_name'], $destination)) {
+            // Return the relative path for database storage
+            return 'uploads/products/' . $filename;
+        }
+
+        return null;
     }
 }
 ?>

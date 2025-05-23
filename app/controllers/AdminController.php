@@ -1,9 +1,11 @@
 <?php
 class AdminController {
     private $db;
+    private $userModel;
 
     public function __construct() {
         $this->db = Database::getInstance();
+        $this->userModel = new User();
         $this->checkAuth();
     }
     
@@ -85,6 +87,86 @@ class AdminController {
     }
 }
 
+/**
+     * Show edit form
+     *
+     * @param int $id User ID
+     */
+    public function edit($id) {
+        // Only authenticated users
+        $this->requireAuth();
+        
+        // Get users
+        $user = $this->userModel->find($id);
+        if (!$user) {
+            // Redirect to users list
+            header('Location: /admin/users');
+            exit;
+        }
+        
+        // Render view
+        require VIEWS . DS . 'admin' . DS . 'edit.php';
+    }
+
+       /**
+     * Show user details
+     *
+     * @param int $id User ID
+     */
+    public function show($id) {
+        // Only authenticated users
+        $this->requireAuth();
+        
+        // Get user
+        $user = $this->userModel->find($id);
+        if (!$user) {
+            // Redirect to users list if not found
+            header('Location: /admin');
+            exit;
+        }
+        
+        // Render view
+        require VIEWS . DS . 'admin' . DS . 'show.php';
+    }
+    /**
+     * Delete user
+     */
+    public function delete($id) {
+        $this->requireAuth();
+
+        try {
+            // Prevent self-deletion
+            if ($id == $_SESSION['user']['id']) {
+                throw new Exception("You cannot delete your own account");
+            }
+
+            $userModel = new User();
+            if (!$userModel->find($id)) {
+                throw new Exception("User not found");
+            }
+
+            $user = $userModel->data();
+
+            // Delete user
+            if ($userModel->delete($id)) {
+                // Delete profile image if exists
+                if (!empty($user['profile_image']) && file_exists(ROOT . DS . $user['profile_image'])) {
+                    unlink(ROOT . DS . $user['profile_image']);
+                }
+                
+                $_SESSION['success'] = "User deleted successfully";
+            } else {
+                throw new Exception("Failed to delete user");
+            }
+
+        } catch (Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+        }
+
+        header('Location: ' . BASE_URL . 'admin/users');
+        exit;
+    }
+
 protected function requireAuth() {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
@@ -93,6 +175,17 @@ protected function requireAuth() {
     if (!isset($_SESSION['user'])) {
         $_SESSION['error'] = "Please login to access this page";
         header('Location: ' . BASE_URL . 'auth/login');
+        exit;
+    }
+}
+
+/**
+ * Ensure the current user is an admin
+ */
+protected function requireAdmin() {
+    if (!isset($_SESSION['user']) || ($_SESSION['user']['role'] ?? '') !== 'admin') {
+        $_SESSION['error'] = "You do not have permission to access this page";
+        header('Location: ' . BASE_URL . 'admin/dashboard');
         exit;
     }
 }
