@@ -86,6 +86,7 @@ ob_start();
                         <select class="form-control" id="unit" name="unit">
                             <option value="kg" <?= (isset($product['unit']) && $product['unit'] == 'kg') ? 'selected' : '' ?>>kg</option>
                             <option value="g" <?= (isset($product['unit']) && $product['unit'] == 'g') ? 'selected' : '' ?>>g</option>
+                            <option value="dozen" <?= (isset($product['unit']) && $product['unit'] == 'dozen') ? 'selected' : '' ?>>dozen</option>
                             <option value="lb" <?= (isset($product['unit']) && $product['unit'] == 'lb') ? 'selected' : '' ?>>lb</option>
                             <option value="oz" <?= (isset($product['unit']) && $product['unit'] == 'oz') ? 'selected' : '' ?>>oz</option>
                             <option value="piece" <?= (isset($product['unit']) && $product['unit'] == 'piece') ? 'selected' : '' ?>>piece</option>

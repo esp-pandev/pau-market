@@ -70,6 +70,7 @@ ob_start();
                         <select class="form-control" id="unit" name="unit">
                             <option value="kg" selected>kg</option>
                             <option value="g">g</option>
+                            <option value="g">dozen</option>
                             <option value="lb">lb</option>
                             <option value="oz">oz</option>
                             <option value="piece">piece</option>

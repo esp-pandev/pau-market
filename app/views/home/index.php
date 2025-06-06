@@ -200,7 +200,7 @@ require VIEWS . '/home/layout/header.php';
     
     .product-price {
         font-weight: bold;
-        color: #2ecc71;
+        color: #4a8f29;
         margin-bottom: 10px;
         font-size: 1rem;
     }
@@ -213,7 +213,7 @@ require VIEWS . '/home/layout/header.php';
     }
     
     .btn {
-        background-color: #2ecc71;
+        background-color: #4a8f29;
         color: white;
         text-decoration: none;
         border-radius: 4px;
@@ -221,7 +221,7 @@ require VIEWS . '/home/layout/header.php';
     }
     
     .btn:hover {
-        background-color: #27ae60;
+        background-color: #4a8f29;
     }
     
     /* Empty State */
@@ -235,7 +235,7 @@ require VIEWS . '/home/layout/header.php';
     
     .empty-state i {
         font-size: 2.5rem;
-        color: #2ecc71;
+        color: #4a8f29;
         margin-bottom: 15px;
     }
     
