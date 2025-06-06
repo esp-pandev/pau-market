@@ -2,17 +2,25 @@
 class HomeController {
     
     public function index() {
-        // Get database connection
         $db = Database::getInstance();
         
-        // You can fetch data here if needed
-        //$statement = $db->query("SELECT * FROM products LIMIT 5");
-        // $products = $statement->fetchAll();
+        // Get featured products (last 5 days)
+        $statement = $db->query("
+            SELECT * FROM products 
+            WHERE created_at >= DATE_SUB(NOW(), INTERVAL 5 DAY) 
+            ORDER BY created_at DESC 
+            LIMIT 8
+        ");
+        $featuredProducts = $statement->fetchAll();
         
-        // Load view
+        // Get regular products (for other sections if needed)
+        $statement = $db->query("SELECT * FROM products LIMIT 5");
+        $products = $statement->fetchAll();
+        
         $data = [
             'title' => 'PAU-MARKET - Home',
-            // 'products' => $products
+            'featuredProducts' => $featuredProducts,
+            'products' => $products
         ];
         
         $this->loadView('home/index', $data);
@@ -27,18 +35,50 @@ class HomeController {
         $this->loadView('home/about', $data);
     }
 
-    // Public view (anonymous)
-    public function productDisplay() {
-        // Get database connection
+    public function productDetail($id) {
         $db = Database::getInstance();
         
-        // You can fetch data here if needed
+        // Get product with category name by joining with categories table
+        $statement = $db->prepare("
+            SELECT p.*, c.name as category_name 
+            FROM products p
+            LEFT JOIN categories c ON p.category_id = c.id
+            WHERE p.id = ?
+        ");
+        $statement->execute([$id]);
+        $product = $statement->fetch();
+        
+        if (!$product) {
+            $this->notFound();
+            return;
+        }
+        
+        // Get related products (e.g., same category, excluding current product)
+        $relatedStatement = $db->prepare("
+            SELECT * FROM products 
+            WHERE category_id = ? AND id != ? 
+            ORDER BY created_at DESC 
+            LIMIT 4
+        ");
+        $relatedStatement->execute([$product['category_id'], $id]);
+        $relatedProducts = $relatedStatement->fetchAll();
+
+        $data = [
+            'title' => 'PAU-MARKET - ' . $product['name'],
+            'product' => $product,
+            'relatedProducts' => $relatedProducts
+        ];
+        
+        $this->loadView('home/productDetail', $data);
+    }
+    // Public view (anonymous)
+    public function productDisplay() {
+        $db = Database::getInstance();
         $statement = $db->query("SELECT * FROM products");
         $products = $statement->fetchAll();
         
-        // Load view
         $data = [
-            'title' => 'PAU-MARKET - Home',
+            'title' => 'PAU-MARKET - Products',
             'products' => $products
         ];
         

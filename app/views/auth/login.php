@@ -183,7 +183,7 @@
         </form>
         
         <div class="auth-footer">
-            Note: Access to Administration Panel is restricted to admin users only. <a href="<?php echo BASE_URL; ?>/">Back to Home</a>
+            Note: Access to Administration Panel is restricted to admin users only. <a href="<?php echo BASE_URL; ?> ">Back to Home</a>
         </div>
     </div>
 </body>

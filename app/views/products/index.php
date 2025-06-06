@@ -41,7 +41,7 @@ ob_start();
         <table class="table table-striped table-bordered table-hover">
             <thead class="thead-dark">
                 <tr>
-                    <!--<th>Image</th>-->
+                    <!-- <th>Image</th>-->
                     <th>Name</th>
                     <th>Price (K)</th>
                     <th>Quantity</th>
@@ -55,29 +55,35 @@ ob_start();
                 <?php foreach ($products as $product): ?>
                 <tr><!--
                     <td>
-                        <?php if (!empty($product['image'])): ?>
-                            <?php
-                            // Ensure the path doesn't start with a slash
-                            $imagePath = ltrim($product['image'], '/');
-                            // Remove 'public/' if it exists in the path
-                            $imagePath = str_replace('public/', '', $imagePath);
-                            ?>
-                            <img src="<?= BASE_URL . $imagePath ?>" 
-                                alt="<?= htmlspecialchars($product['name']) ?>" 
-                                style="width: 80px; height: 80px; object-fit: cover;"
-                                onerror="this.src='<?= BASE_URL ?>assets/images/default-product.jpg'">
-                        <?php else: ?>
-                            <img src="<?= BASE_URL ?>assets/images/default-product.jpg" 
-                                alt="No image available"
-                                style="width: 80px; height: 80px; object-fit: cover;">
-                        <?php endif; ?>
-                    </td> -->
+    <?php if (!empty($product['image'])): ?>
+        <?php
+        // Windows path fix - replace backslashes if any
+        $imagePath = str_replace('\\', '/', $product['image']);
+        $imageUrl = BASE_URL . ltrim($imagePath, '/');
+        $physicalPath = 'C:/wamp64/www/pau-market/public/' . ltrim($imagePath, '/');
+        ?>
+        
+        <?php if (file_exists($physicalPath)): ?>
+            <img src="<?= $imageUrl ?>" 
+                 alt="<?= htmlspecialchars($product['name']) ?>" 
+                 class="product-img">
+        <?php else: ?>
+            <div class="no-image" title="File missing: <?= htmlspecialchars($physicalPath) ?>">
+                <span>File missing</span>
+            </div>
+        <?php endif; ?>
+    <?php else: ?>
+        <div class="no-image">
+            <span>No image</span>
+        </div>
+    <?php endif; ?>
+</td>-->
                     <td><?= htmlspecialchars($product['name']) ?></td>
                     <td><?= number_format($product['price'], 2) ?></td>
                     <td><?= htmlspecialchars($product['quantity_available']) ?></td>
                     <td><?= htmlspecialchars($product['unit']) ?></td>
                     <td><?= isset($categoryMap[$product['category_id']]) ? htmlspecialchars($categoryMap[$product['category_id']]) : 'Uncategorized' ?></td>
-                    <td><?= htmlspecialchars(substr($product['description'], 0, 100)) ?>...</td>
+                    <td><?= htmlspecialchars(substr($product['description'], 0, 30)) ?>...</td>
                     <td>
                         <div class="btn-group" role="group">
                             <a href="<?= BASE_URL ?>products/show/<?= $product['id'] ?>" class="btn btn-sm btn-info">View</a>

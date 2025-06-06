@@ -73,11 +73,11 @@ $activePage = $activePage ?? 'dashboard'; // Default to 'dashboard' if not defin
 				<div class="mobile-toggle-menu"><i class='bx bx-menu'></i></div>
 				<div class="user-box dropdown px-3">
 					<a class="d-flex align-items-center nav-link dropdown-toggle gap-3 dropdown-toggle-nocaret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-						<span>Welcome, <?php echo $_SESSION['user']['first_name'] . ' ' . $_SESSION['user']['last_name'] ?? 'Guest'; ?></span>
+						<span>Welcome, <?php echo $_SESSION['user']['first_name'] . ' ' . $_SESSION['user']['last_name'] ?? 'Guest'; ?></span><!--
 						<div class="profile-dropdown">
 							<img src="<?php echo BASE_URL; ?>assets/images/default-profile.png" alt="Profile" class="profile-img">
 							<div class="dropdown-content">
-								<a href="<?php echo BASE_URL; ?>admin/profile"><i class="fas fa-user"></i> Profile</a>
+								<a href="<?php echo BASE_URL; ?>admin/profile"><i class="fas fa-user"></i> Profile</a>-->
 								<a href="<?php echo BASE_URL; ?>auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
 							</div>
 						</div>

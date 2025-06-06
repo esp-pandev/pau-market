@@ -1,265 +1,448 @@
+
 <?php
 // views/home/index.php
 $pageTitle = 'PAU-MARKET - Farm Fresh Marketplace';
 $currentPage = 'home';
 require VIEWS . '/home/layout/header.php';
 ?>
-<section class="hero">
-    <div class="hero-content">
-        <h1>PAU-MARKET</h1>
-        <h2>Fresh From Our Farm to Your Table</h2>
-        <p>Connecting local farmers with buyers for the freshest agricultural products at fair prices</p>
-        <a href="<?= BASE_URL ?>products" class="btn">Shop Fresh Produce</a>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Fresh From Our Farm to Your Table</h1>
+                <p>Discover the freshest local produce, artisan goods, and community spirit at Green Valley Farmers Market. Supporting local farmers since 2010.</p>
+                <div class="hero-btns">
+                    <a href="#" class="btn">Shop Now</a>
+                    <a href="#" class="btn btn-outline">Meet Our Farmers</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Our Story</h3>
+                    <p>PAU Farmers Market is proudly hosted by Pacific Adventist University, bringing fresh, farm-to-table produce directly to our community. As an integral part of the university's agricultural program, we showcase the finest seasonal harvests grown right on our campus.</p>
+                    <p>Open every Sunday from 6:00 AM to 5:00 PM, our market offers fresh-picked fruits and vegetables from our university farms, all grown using sustainable practices. Come experience the taste of truly fresh produce while supporting agricultural education!</p>
+                    <a href="#" class="btn" style="margin-top: 20px;">Learn More</a>
+                </div><!--
+                <div class="about-image">
+                    <img src="<?= BASE_URL ?>public/uploads/market/pau-campus.jpg" alt="Pacific Adventist University campus farms">
+                </div>-->
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1606787366850-de6330128bfc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Morning farmers market">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="products">
+    <div class="container">
+        <div class="section-title">
+            <h2>This Week's Harvest</h2>
+            <p>Fresh from our local farms - available now at the market</p>
+        </div>
+        
+        <?php if (empty($products)): ?>
+            <div class="empty-state">
+                <i class="fas fa-seedling"></i>
+                <h3>No Featured Products Available</h3>
+                <p>Check back soon for our latest harvest</p>
+            </div>
+        <?php else: ?>
+            <div class="product-grid">
+                <?php foreach ($products as $product): ?>
+                <div class="product-card">
+                    <div class="product-image" 
+                         style="background-image: url('<?= BASE_URL . 'public/uploads/products/' . ($product['image'] ?? 'assets/images/default-product.jpg') ?>')">
+                    </div>
+                    <div class="product-info">
+                        <h3><?= htmlspecialchars($product['name']) ?></h3>
+                        <div class="product-price">K<?= number_format($product['price'], 2) ?>/<?= htmlspecialchars($product['unit']) ?></div>
+                        <p><?= htmlspecialchars($product['description']) ?></p>
+                        <a href="<?= BASE_URL ?>home/productDetail/<?= $product['id'] ?>" class="btn" style="margin-top: 15px; display: inline-block; padding: 8px 20px; font-size: 0.8rem;">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
     </div>
 </section>
 
-<main>
-    <section>
-        <h2>About PAU-MARKET</h2>
-        <p style="text-align: center; max-width: 800px; margin: 0 auto 2rem;">
-            PAU-MARKET is revolutionizing agricultural commerce by creating direct connections between producers and consumers. 
-            Our digital marketplace promotes sustainable farming practices while ensuring fair prices for both farmers and buyers.
-        </p>
-    </section>
-    
-    <section class="products">
-        <h2>Featured Products</h2>
-        <div class="product-grid">
-            <?php if (!empty($featuredProducts)): ?>
-                <?php foreach ($featuredProducts as $product): ?>
-                    <div class="product-card">
-                        <div class="product-img" style="background-image: url('<?= BASE_URL . ($product['image'] ?: 'assets/images/default-product.jpg') ?>');"></div>
-                        <div class="product-content">
-                            <h4><?= htmlspecialchars($product['name']) ?></h4>
-                            <p class="price">$<?= number_format($product['price'], 2) ?>/<?= htmlspecialchars($product['unit']) ?></p>
-                            <p><?= htmlspecialchars($product['description']) ?></p>
-                            <a href="<?= BASE_URL ?>products/show/<?= $product['id'] ?>" class="btn" style="display: inline-block; padding: 0.5rem 1rem; margin-top: 0.5rem; font-size: 0.9rem;">View Details</a>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p style="grid-column: 1 / -1; text-align: center;">No featured products available at the moment.</p>
-            <?php endif; ?>
+    <!-- Newsletter -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="section-title">
+                <h2>Stay Connected</h2>
+                <p>Sign up for our weekly newsletter to receive updates on seasonal produce, special events, and vendor highlights.</p>
+            </div>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Your email address" required>
+                <button type="submit">Subscribe</button>
+            </form>
         </div>
     </section>
-    
-    <section>
-        <h2>How It Works</h2>
-        <div class="steps">
-            <div class="step">
-                <div class="step-icon">
-                    <i class="fas fa-user-plus"></i>
-                </div>
-                <h4>1. Register</h4>
-                <p>Create your free account as a buyer or seller in minutes</p>
-            </div>
-            <div class="step">
-                <div class="step-icon">
-                    <i class="fas fa-search"></i>
-                </div>
-                <h4>2. Browse or List</h4>
-                <p>Find fresh products or list your agricultural goods</p>
-            </div>
-            <div class="step">
-                <div class="step-icon">
-                    <i class="fas fa-shopping-cart"></i>
-                </div>
-                <h4>3. Transact</h4>
-                <p>Complete secure transactions through our platform</p>
-            </div>
-        </div>
-    </section>
-</main>
 
-<style>
-    /* Hero Section - Adjusted to fit screen width */
-    .hero {
-        width: 100%;
-        height: 70vh; /* Adjusted height */
-        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
-                    url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        color: white;
-        padding: 0 2rem;
-        position: relative;
-    }
-
-    .hero-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        text-align: center;
-        padding-top: 80px; /* Space for navigation */
-    }
-
-    .hero h1 {
-        font-size: 3.5rem;
-        margin-bottom: 0.5rem;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    }
-    
-    .hero h2 {
-        font-size: 2.2rem;
-        margin-bottom: 1rem;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        font-weight: 400;
-    }
-    
-    .hero p {
-        font-size: 1.1rem;
-        max-width: 600px;
-        margin: 0 auto 2rem;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-        line-height: 1.6;
-    }
-    
-    .btn {
-        display: inline-block;
-        padding: 0.8rem 2.5rem;
-        background-color: var(--secondary);
-        color: var(--dark);
-        border-radius: 50px;
-        font-weight: 600;
-        transition: all 0.3s;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-size: 0.9rem;
-        margin-top: 1rem;
-    }
-    
-    .btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    
-    /* Main Content */
-    main {
-        max-width: 1200px;
-        margin: 4rem auto;
-        padding: 0 2rem;
-    }
-    
-    section {
-        margin-bottom: 4rem;
-    }
-    
-    h2 {
-        color: var(--primary);
-        font-size: 2.5rem;
-        margin-bottom: 2rem;
-        text-align: center;
-        position: relative;
-    }
-    
-    h2::after {
-        content: '';
-        display: block;
-        width: 100px;
-        height: 4px;
-        background-color: var(--secondary);
-        margin: 1rem auto 0;
-    }
-    
-    /* Products Section */
+    <?php require VIEWS . '/home/layout/footer.php'; ?>
+    <style>
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url('https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding-top: 80px;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero-btns {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        /* About Section */
+        .about {
+            background-color: white;
+        }
+        
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+        
+        .about-text {
+            flex: 1;
+        }
+        
+        .about-text h3 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .about-image {
+            flex: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Product Grid Styles */
     .product-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
-        margin-top: 2rem;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
     }
     
     .product-card {
-        background-color: white;
+        background: white;
         border-radius: 8px;
         overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
     }
     
     .product-card:hover {
-        transform: translateY(-10px);
+        transform: translateY(-5px);
     }
     
-    .product-img {
+    .product-image {
         height: 200px;
         background-size: cover;
         background-position: center;
     }
     
-    .product-content {
-        padding: 1.5rem;
+    .product-info {
+        padding: 20px;
     }
     
-    .product-card h4 {
-        color: var(--dark);
-        margin-bottom: 0.5rem;
+    .product-info h3 {
+        margin: 0 0 10px 0;
+        color: #333;
+        font-size: 1.1rem;
     }
     
-    .product-card .price {
-        color: var(--accent);
-        font-weight: 700;
-        margin-bottom: 0.5rem;
+    .product-price {
+        font-weight: bold;
+        color: #2ecc71;
+        margin-bottom: 10px;
+        font-size: 1rem;
     }
     
-    /* How It Works */
-    .steps {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-        margin-top: 3rem;
+    .product-info p {
+        color: #666;
+        font-size: 0.9rem;
+        margin: 0 0 15px 0;
+        line-height: 1.4;
     }
     
-    .step {
+    .btn {
+        background-color: #2ecc71;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    
+    .btn:hover {
+        background-color: #27ae60;
+    }
+    
+    /* Empty State */
+    .empty-state {
         text-align: center;
-        padding: 2rem;
-        background-color: white;
+        padding: 40px 20px;
+        background: white;
         border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        margin: 20px 0;
     }
     
-    .step-icon {
-        font-size: 3rem;
-        color: var(--primary);
-        margin-bottom: 1rem;
+    .empty-state i {
+        font-size: 2.5rem;
+        color: #2ecc71;
+        margin-bottom: 15px;
     }
     
-    .step h4 {
-        margin-bottom: 1rem;
-        color: var(--dark);
+    .empty-state h3 {
+        color: #333;
+        margin-bottom: 10px;
     }
     
-    @media (max-width: 768px) {
-        .hero h2 {
-            font-size: 2rem;
+    .empty-state p {
+        color: #666;
+    }
+        
+        /* Newsletter */
+        .newsletter {
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
         }
         
-        .steps {
-            grid-template-columns: 1fr;
+        .newsletter h2 {
+            color: white;
         }
-    }
-</style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Simple animation for product cards
-        const productCards = document.querySelectorAll('.product-card');
         
-        productCards.forEach((card, index) => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            card.style.transition = `all 0.5s ease ${index * 0.1}s`;
+        .newsletter-form {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+        }
+        
+        .newsletter-form input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 50px 0 0 50px;
+            font-size: 1rem;
+        }
+        
+        .newsletter-form button {
+            border-radius: 0 50px 50px 0;
+            padding: 15px 25px;
+            background-color: var(--secondary);
+            color: var(--dark);
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .newsletter-form button:hover {
+            background-color: #e69500;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 60px 0 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--secondary);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--secondary);
+            color: var(--dark);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .about-content {
+                flex-direction: column;
+            }
             
-            setTimeout(() => {
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }, 100);
+            .about-image {
+                order: -1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 15px 0;
+            }
+            
+            nav {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 80px);
+                background-color: white;
+                transition: left 0.3s;
+                padding: 30px;
+            }
+            
+            nav.active {
+                left: 0;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+            
+            nav ul li {
+                margin: 15px 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-btns {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+            
+            .newsletter-form input {
+                border-radius: 50px;
+                margin-bottom: 10px;
+            }
+            
+            .newsletter-form button {
+                border-radius: 50px;
+            }
+        }
+    </style>
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mainNav = document.getElementById('mainNav');
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            mainNav.classList.toggle('active');
+            this.innerHTML = mainNav.classList.contains('active') ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
         });
-    });
-</script>
-
-<?php require VIEWS . '/home/layout/footer.php'; ?>
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                if(this.getAttribute('href') === '#') return;
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Animation on scroll
+        window.addEventListener('scroll', function() {
+            const scrollPosition = window.scrollY;
+            
+            // Add parallax effect to hero
+            if(document.querySelector('.hero')) {
+                document.querySelector('.hero').style.backgroundPositionY = scrollPosition * 0.5 + 'px';
+            }
+        });
+    </script>
+</body>
+</html>

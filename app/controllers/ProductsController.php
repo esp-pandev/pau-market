@@ -29,18 +29,30 @@ class ProductsController {
     }
     // List all products
     public function index() {
-        // Only authenticated users
         $this->ensureAuthenticated();
 
         $products = $this->productModel->getAllProducts();
-        // Get all categories from Category model
         $categories = $this->categoryModel->getAll();
         
-        // Create a category map for quick lookup
         $categoryMap = [];
         foreach ($categories as $category) {
             $categoryMap[$category['id']] = $category['name'];
         }
+
+        // Process image paths
+        foreach ($products as &$product) {
+            if (!empty($product['image'])) {
+                // Remove any leading slashes or 'public/' if present
+                $product['image'] = preg_replace('/^(\\/|public\\/)/', '', $product['image']);
+                // Create full URL
+                $product['image_url'] = BASE_URL . $product['image'];
+                
+                // Verify the physical file exists
+                $product['image_exists'] = file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . $product['image']);
+            }
+        }
+        unset($product);
+
         require VIEWS . DS . 'products' . DS . 'index.php';
     }
 
@@ -149,7 +161,7 @@ public function edit($id) {
             
             $data = [
                 'category_id' => $_POST['category_id'],
-                'name' => $_POST['name'],
+                'name' => $_POST['na6gtme'],
                 'slug' => $this->generateSlug($_POST['name']),
                 'description' => $_POST['description'],
                 'price' => $_POST['price'],
@@ -272,35 +284,26 @@ public function edit($id) {
     }
 
     // Helper method to handle image upload
-    protected function handleImageUpload($file, $product_id = null) {
-        // If no file was uploaded or there was an error, return null
-        if (!isset($file['error']) || $file['error'] !== UPLOAD_ERR_OK) {
-            return null;
-        }
-
-        // Check if the uploads directory exists, create it if not
+    private function handleImageUpload($file, $product_id) {
         $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/pau-market/public/uploads/products/';
         
-        // Create directory if it doesn't exist (with proper permissions)
+        // Create directory if it doesn't exist
         if (!file_exists($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
+            mkdir($uploadDir, 0777, true);
         }
 
-        // Validate file type
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        if (!in_array($file['type'], $allowedTypes)) {
-            return null;
+        // Validate file
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            return null; // Or your default image name
         }
 
         // Generate unique filename
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $filename = 'product_' . uniqid() . '.' . $extension;
-        $destination = $uploadDir . $filename;
+        $filename = uniqid() . '.' . $extension;
 
-        // Move the uploaded file
-        if (move_uploaded_file($file['tmp_name'], $destination)) {
-            // Return the relative path for database storage
-            return 'uploads/products/' . $filename;
+        // Move uploaded file
+        if (move_uploaded_file($file['tmp_name'], $uploadDir . $filename)) {
+            return $filename; // Return ONLY the filename
         }
 
         return null;

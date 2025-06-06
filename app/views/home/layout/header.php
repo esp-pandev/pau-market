@@ -1,216 +1,264 @@
-<?php
-// views/home/layout/header.php
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle ?? 'PAU-MARKET') ?></title>
+    <title>PAU Farmers Market | Fresh Local Produce</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!--<link rel="stylesheet" href="<?= BASE_URL ?>assets/css/styles.css">-->
     <style>
+        /* Color Scheme */
         :root {
-            --primary: #4e8c3f;
-            --primary-dark: #3a6b2f;
-            --secondary: #f8b400;
-            --dark: #2d3436;
-            --light: #f9f9f9;
-            --gray: #e0e0e0;
+            --primary: #4a8f29; /* Fresh green */
+            --secondary: #f5a623; /* Warm orange */
+            --accent: #e74c3c; /* Tomato red */
+            --light: #f8f9fa;
+            --dark: #2c3e50;
             --text: #333;
-            --text-light: #666;
+            --background: #f9f7f0;
         }
         
+        /* Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background-color: var(--light);
-            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            color: var(--text);
+            background-color: var(--background);
+            padding-top: 80px; /* Space for fixed header */
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        section {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .section-title p {
+            max-width: 700px;
+            margin: 0 auto;
+            color: var(--text);
         }
         
         /* Header Styles */
         header {
             background-color: white;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 1rem 2rem;
-            position: sticky;
+            position: fixed;
+            width: 100%;
             top: 0;
             z-index: 1000;
         }
         
         .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 20px 0;
         }
         
         .logo {
-        font-size: 2rem;
-        font-weight: bold;
-        color: white;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
         }
         
         .logo img {
             height: 50px;
+            margin-right: 10px;
         }
         
-        .logo-text {
+        .logo h1 {
             font-size: 1.5rem;
-            font-weight: 700;
             color: var(--primary);
         }
         
-        .navbar {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: transparent;
-        z-index: 100;
-        }
-
-        .nav-links {
-        display: flex;
-        gap: 2rem;
-        }
-
-        .nav-links a {
-        color: white;
-        text-decoration: none;
-        font-weight: 500;
-        text-transform: uppercase;
-        font-size: 0.9rem;
-        letter-spacing: 1px;
-        }
-
-        .login-btn {
-        background-color: var(--secondary);
-        color: var(--dark);
-        padding: 0.5rem 1.5rem;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        }
-
-        nav ul {
+        /* Navigation Styles */
+        #mainNav ul {
             display: flex;
             list-style: none;
-            gap: 2rem;
+            align-items: center;
+            margin: 0;
+            padding: 0;
         }
         
-        nav a {
-            color: var(--dark);
-            font-weight: 600;
-            padding: 0.5rem 0;
+        #mainNav li {
+            margin-left: 25px;
             position: relative;
-            text-decoration: none;
-            transition: color 0.3s;
         }
         
-        nav a:hover {
+        #mainNav li a {
+            font-weight: 600;
+            color: var(--dark);
+            transition: all 0.3s;
+            position: relative;
+            padding: 5px 0;
+        }
+        
+        #mainNav li a:hover {
             color: var(--primary);
         }
         
-        nav a.active {
+        /* Active Link Styling */
+        #mainNav li a.active {
             color: var(--primary);
+            font-weight: 700;
         }
         
-        nav a.active::after,
-        nav a:hover::after {
+        #mainNav li a::after {
             content: '';
             position: absolute;
-            width: 100%;
+            width: 0;
             height: 2px;
+            background-color: var(--primary);
             bottom: 0;
             left: 0;
-            background-color: var(--primary);
             transition: width 0.3s;
         }
         
+        #mainNav li a:hover::after,
+        #mainNav li a.active::after {
+            width: 100%;
+        }
+        
+        /* Admin Login Button */
         .login-btn {
             background-color: var(--primary);
             color: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: 50px;
+            padding: 8px 20px;
+            border-radius: 4px;
             font-weight: 600;
-            text-decoration: none;
             transition: all 0.3s;
         }
         
         .login-btn:hover {
-            background-color: var(--primary-dark);
+            background-color: var(--secondary);
             transform: translateY(-2px);
         }
         
-        /* Main Content */
-        main {
-            flex: 1;
-            padding: 2rem 0;
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            cursor: pointer;
         }
         
         @media (max-width: 768px) {
-        .hero {
-            height: 80vh;
-        }
-        
-        .hero h1 {
-            font-size: 2.5rem;
-        }
-        
-        .hero h2 {
-            font-size: 1.8rem;
-        }
-        
-        .nav-links {
-            display: none; 
-        }
-    }@media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                gap: 1rem;
+            .mobile-menu-btn {
+                display: block;
             }
             
-            nav ul {
-                gap: 1rem;
+            #mainNav ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: white;
+                flex-direction: column;
+                padding: 20px 0;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            #mainNav ul.show {
+                display: flex;
+            }
+            
+            #mainNav li {
+                margin: 10px 0;
+                padding: 0 20px;
+                width: 100%;
+            }
+            
+            .login-btn {
+                margin: 10px 20px;
+                display: block;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Header -->
     <header>
-        <div class="header-container">
+        <div class="container header-container">
             <div class="logo">
-                <img src="<?= BASE_URL ?>assets/images/logo.png" alt="PAU-MARKET Logo">
-                <!--<span class="logo-text">PAU-MARKET</span>-->
+                <h1>PAU Farmers Market</h1>
             </div>
-            
-            <nav>
-                <ul>
-                    <li><a href="<?= BASE_URL ?>" <?= ($currentPage ?? '') === 'home' ? 'class="active"' : '' ?>>Home</a></li>
-                    <li><a href="<?= BASE_URL ?>about" <?= ($currentPage ?? '') === 'about' ? 'class="active"' : '' ?>>About</a></li>
-                    <li><a href="<?= BASE_URL ?>home/productDisplay" <?= ($currentPage ?? '') === 'products' ? 'class="active"' : '' ?>>Products</a></li>
-                    <li><a href="<?= BASE_URL ?>contact" <?= ($currentPage ?? '') === 'contact' ? 'class="active"' : '' ?>>Contact</a></li>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav id="mainNav">
+                <ul id="navMenu">
+                    <li><a href="<?= BASE_URL ?>" class="<?= ($currentPage ?? '') === 'home' ? 'active' : '' ?>">Home</a></li>
+                    <li><a href="<?= BASE_URL ?>about" class="<?= ($currentPage ?? '') === 'about' ? 'active' : '' ?>">About</a></li>
+                    <li><a href="<?= BASE_URL ?>home/productDisplay" class="<?= ($currentPage ?? '') === 'products' ? 'active' : '' ?>">Products</a></li>
+                    <li><a href="<?= BASE_URL ?>contact" class="<?= ($currentPage ?? '') === 'contact' ? 'active' : '' ?>">Contact</a></li>
+                    <li><a href="<?= BASE_URL ?>auth/login" class="login-btn <?= ($currentPage ?? '') === 'login' ? 'active' : '' ?>">Admin Login</a></li>
                 </ul>
             </nav>
-            
-            <a href="<?= BASE_URL ?>auth/login" class="login-btn">Admin Login</a>
         </div>
     </header>
-    
-    <main>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('navMenu').classList.toggle('show');
+        });
+    </script>
+</body>
+</html>

@@ -59,7 +59,7 @@ function handleNotFound() {
 $url = isset($_GET['url']) ? rtrim($_GET['url'], '/') : 'home/index';
 $urlParts = explode('/', filter_var($url, FILTER_SANITIZE_URL));
 
-// Handle products/publicCatalog as a special case
+// Handle product display catalog
 if (count($urlParts) === 2 && $urlParts[0] === 'home' && $urlParts[1] === 'productDisplay') {
     $controllerName = 'HomeController';
     $actionName = 'productDisplay';
@@ -70,6 +70,22 @@ if (count($urlParts) === 2 && $urlParts[0] === 'home' && $urlParts[1] === 'produ
         if (method_exists($controllerName, $actionName)) {
             $controller = new $controllerName($db);
             $controller->$actionName();
+            exit;
+        }
+    }
+}
+// Handle product detail pages
+elseif (count($urlParts) === 3 && $urlParts[0] === 'products' && $urlParts[1] === 'details') {
+    $controllerName = 'HomeController';
+    $actionName = 'productDetail';
+    $productId = $urlParts[2]; // Get the product ID from URL
+    
+    $controllerFile = CONTROLLERS . DS . $controllerName . '.php';
+    if (file_exists($controllerFile)) {
+        require_once $controllerFile;
+        if (method_exists($controllerName, $actionName)) {
+            $controller = new $controllerName($db);
+            $controller->$actionName($productId);
             exit;
         }
     }
