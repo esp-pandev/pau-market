@@ -107,7 +107,7 @@ require VIEWS . '/home/layout/header.php';
     /* Hero Section - Contact Page */
     .hero-contact {
         background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-                    url('https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+                    url('<?= BASE_URL ?>public/uploads/market/farmers-market-hero.jpg') no-repeat center center;
         background-size: cover;
         background-position: center;
         height: 50vh;

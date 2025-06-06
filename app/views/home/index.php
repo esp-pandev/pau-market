@@ -10,11 +10,11 @@ require VIEWS . '/home/layout/header.php';
         <div class="container">
             <div class="hero-content">
                 <h1>Fresh From Our Farm to Your Table</h1>
-                <p>Discover the freshest local produce, artisan goods, and community spirit at Green Valley Farmers Market. Supporting local farmers since 2010.</p>
-                <div class="hero-btns">
+                <p>Discover the freshest local produce, artisan goods, and community spirit at PAU Farmers Market. Supporting local farmers.</p>
+                <!--<div class="hero-btns">
                     <a href="#" class="btn">Shop Now</a>
                     <a href="#" class="btn btn-outline">Meet Our Farmers</a>
-                </div>
+                </div>-->
             </div>
         </div>
     </section>
@@ -27,53 +27,57 @@ require VIEWS . '/home/layout/header.php';
                     <h3>Our Story</h3>
                     <p>PAU Farmers Market is proudly hosted by Pacific Adventist University, bringing fresh, farm-to-table produce directly to our community. As an integral part of the university's agricultural program, we showcase the finest seasonal harvests grown right on our campus.</p>
                     <p>Open every Sunday from 6:00 AM to 5:00 PM, our market offers fresh-picked fruits and vegetables from our university farms, all grown using sustainable practices. Come experience the taste of truly fresh produce while supporting agricultural education!</p>
-                    <a href="#" class="btn" style="margin-top: 20px;">Learn More</a>
-                </div><!--
+                    <a href="<?= BASE_URL ?>about" class="btn" style="margin-top: 20px;">Learn More</a>
+                </div>
                 <div class="about-image">
-                    <img src="<?= BASE_URL ?>public/uploads/market/pau-campus.jpg" alt="Pacific Adventist University campus farms">
-                </div>-->
-                <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1606787366850-de6330128bfc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Morning farmers market">
+                    <img src="<?= BASE_URL ?>public/uploads/market/farmers-market.webp" alt="Pacific Adventist University campus farms">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Featured Products -->
+        <!-- Featured Products -->
     <section class="products">
-    <div class="container">
-        <div class="section-title">
-            <h2>This Week's Harvest</h2>
-            <p>Fresh from our local farms - available now at the market</p>
-        </div>
-        
-        <?php if (empty($products)): ?>
-            <div class="empty-state">
-                <i class="fas fa-seedling"></i>
-                <h3>No Featured Products Available</h3>
-                <p>Check back soon for our latest harvest</p>
+        <div class="container">
+            <div class="section-title">
+                <h2>This Week's Harvest</h2>
+                <p>Fresh from our local farms - available now at the market</p>
             </div>
-        <?php else: ?>
-            <div class="product-grid">
-                <?php foreach ($products as $product): ?>
-                <div class="product-card">
-                    <div class="product-image" 
-                         style="background-image: url('<?= BASE_URL . 'public/uploads/products/' . ($product['image'] ?? 'assets/images/default-product.jpg') ?>')">
-                    </div>
-                    <div class="product-info">
-                        <h3><?= htmlspecialchars($product['name']) ?></h3>
-                        <div class="product-price">K<?= number_format($product['price'], 2) ?>/<?= htmlspecialchars($product['unit']) ?></div>
-                        <p><?= htmlspecialchars($product['description']) ?></p>
-                        <a href="<?= BASE_URL ?>home/productDetail/<?= $product['id'] ?>" class="btn" style="margin-top: 15px; display: inline-block; padding: 8px 20px; font-size: 0.8rem;">
-                            View Details
-                        </a>
-                    </div>
+            
+            <?php if (empty($products)): ?>
+                <div class="empty-state">
+                    <i class="fas fa-seedling"></i>
+                    <h3>No Featured Products Available</h3>
+                    <p>Check back soon for our latest harvest</p>
                 </div>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
-    </div>
-</section>
+            <?php else: ?>
+                <div class="product-grid">
+                    <?php foreach ($products as $product): ?>
+                    <div class="product-card">
+                        <div class="product-image" 
+                            style="background-image: url('<?= BASE_URL . 'public/uploads/products/' . ($product['image'] ?? 'assets/images/default-product.jpg') ?>')">
+                        </div>
+                        <div class="product-info">
+                            <h3><?= htmlspecialchars($product['name']) ?></h3>
+                            <div class="product-price">K<?= number_format($product['price'], 2) ?>/<?= htmlspecialchars($product['unit']) ?></div>
+                            <p><?= htmlspecialchars($product['description']) ?></p>
+                            <a href="<?= BASE_URL ?>home/productDetail/<?= $product['id'] ?>" class="btn" style="margin-top: 15px; display: inline-block; padding: 8px 20px; font-size: 0.8rem;">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                
+                <div class="view-more-container" style="text-align: center; margin-top: 40px;">
+                    <a href="<?= BASE_URL ?>home/productDisplay" class="btn btn-outline" style="padding: 12px 30px; font-size: 0.9rem;">
+                        View All Products
+                    </a>
+                </div>
+            <?php endif; ?>
+        </div>
+    </section>
+
 
     <!-- Newsletter -->
     <section class="newsletter">
@@ -95,7 +99,7 @@ require VIEWS . '/home/layout/header.php';
         /* Hero Section */
         .hero {
             background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-                        url('https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+                        url('<?= BASE_URL ?>public/uploads/market/farmers-market.jpg') no-repeat center center;
             background-size: cover;
             background-position: center;
             height: 100vh;

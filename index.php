@@ -97,6 +97,7 @@ $routes = [
     'products' => ['controller' => 'Products', 'action' => 'index'],
     'about' => ['controller' => 'Home', 'action' => 'about'],
     'contact' => ['controller' => 'Home', 'action' => 'contact'],
+    'sitemap' => ['controller' => 'Home', 'action' => 'sitemap'],
     'categories/(\d+)' => ['controller' => 'Categories', 'action' => 'show']
 ];
 

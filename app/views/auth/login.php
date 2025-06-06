@@ -12,7 +12,7 @@
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-                        url('https://images.unsplash.com/photo-1606787366850-de6330128bfc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+                       url('<?= BASE_URL ?>public/uploads/market/login.jpg') no-repeat center center;
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -151,7 +151,7 @@
     <div class="auth-container">
         <div class="auth-header">
             <h1>Login</h1>
-            <h4>Welcome back! Please enter your PAU Market Admin Panel login credentials to login.</h4>
+            <h4>Please enter your PAU Market Admin login credentials to login.</h4>
         </div>
         <?php if (isset($error)): ?>
             <div class="alert error">

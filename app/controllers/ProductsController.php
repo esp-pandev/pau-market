@@ -161,13 +161,13 @@ public function edit($id) {
             
             $data = [
                 'category_id' => $_POST['category_id'],
-                'name' => $_POST['na6gtme'],
+                'name' => $_POST['name'], // Fixed: Changed from 'na6gtme' to 'name'
                 'slug' => $this->generateSlug($_POST['name']),
                 'description' => $_POST['description'],
                 'price' => $_POST['price'],
                 'quantity_available' => $_POST['quantity_available'] ?? 0,
                 'unit' => $_POST['unit'] ?? 'kg',
-                'image' => $existingProduct['image_path'] // Keep existing image by default
+                'image' => $existingProduct['image'] // Changed from 'image_path' to 'image'
             ];
 
             // Handle image upload if a new file was provided
@@ -175,8 +175,8 @@ public function edit($id) {
                 $newImage = $this->handleImageUpload($_FILES['image'], $id);
                 if ($newImage) {
                     // Delete old image if it exists
-                    if (!empty($existingProduct['image_path'])) {
-                        $oldImagePath = $_SERVER['DOCUMENT_ROOT'] . $existingProduct['image_path'];
+                    if (!empty($existingProduct['image'])) {
+                        $oldImagePath = $_SERVER['DOCUMENT_ROOT'] . '/pau-market/public/uploads/products/' . $existingProduct['image'];
                         if (file_exists($oldImagePath)) {
                             unlink($oldImagePath);
                         }
@@ -187,8 +187,8 @@ public function edit($id) {
 
             // Handle image removal if checkbox is checked
             if (isset($_POST['remove_image']) && $_POST['remove_image'] === 'on') {
-                if (!empty($existingProduct['image_path'])) {
-                    $oldImagePath = $_SERVER['DOCUMENT_ROOT'] . $existingProduct['image_path'];
+                if (!empty($existingProduct['image'])) {
+                    $oldImagePath = $_SERVER['DOCUMENT_ROOT'] . '/pau-market/public/uploads/products/' . $existingProduct['image'];
                     if (file_exists($oldImagePath)) {
                         unlink($oldImagePath);
                     }

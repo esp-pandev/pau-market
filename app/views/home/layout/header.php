@@ -248,6 +248,7 @@
                     <li><a href="<?= BASE_URL ?>about" class="<?= ($currentPage ?? '') === 'about' ? 'active' : '' ?>">About</a></li>
                     <li><a href="<?= BASE_URL ?>home/productDisplay" class="<?= ($currentPage ?? '') === 'products' ? 'active' : '' ?>">Products</a></li>
                     <li><a href="<?= BASE_URL ?>contact" class="<?= ($currentPage ?? '') === 'contact' ? 'active' : '' ?>">Contact</a></li>
+                    <li><a href="<?= BASE_URL ?>sitemap" class="<?= ($currentPage ?? '') === 'sitemap' ? 'active' : '' ?>">Site Map</a></li>
                     <li><a href="<?= BASE_URL ?>auth/login" class="login-btn <?= ($currentPage ?? '') === 'login' ? 'active' : '' ?>">Admin Login</a></li>
                 </ul>
             </nav>

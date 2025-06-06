@@ -14,7 +14,7 @@ class HomeController {
         $featuredProducts = $statement->fetchAll();
         
         // Get regular products (for other sections if needed)
-        $statement = $db->query("SELECT * FROM products LIMIT 5");
+        $statement = $db->query("SELECT * FROM products LIMIT 8");
         $products = $statement->fetchAll();
         
         $data = [
@@ -33,6 +33,15 @@ class HomeController {
         ];
         
         $this->loadView('home/about', $data);
+    }
+
+    public function sitemap() {
+        // Load view
+        $data = [
+            'title' => 'PAU-MARKET - Site Map'
+        ];
+        
+        $this->loadView('home/sitemap', $data);
     }
 
     public function productDetail($id) {
